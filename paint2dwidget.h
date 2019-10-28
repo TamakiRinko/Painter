@@ -6,6 +6,7 @@
 #include "linesegment.h"
 #include "circle.h"
 #include "eraser.h"
+#include "ellipse.h"
 #include <QWidget>
 #include <QPen>
 #include <QBrush>
@@ -20,6 +21,7 @@ public:
     explicit Paint2DWidget(QWidget *parent = nullptr);
     void setMode(Mode mode);
     void setColor(QColor color);
+    void saveTo(QString fileName, const char* format = "bmp");            //保存为指定格式
     ~Paint2DWidget();
 private:
     Mode curMode;                               //当前的模式
@@ -31,7 +33,7 @@ private:
 //    QPainter painter;                           //画家
 //    QPen pen;                                   //画笔
 
-    void drawGraphics(Graphics* graphics);
+    void drawGraphics(QPainter& painter, Graphics* graphics);
     void eraseGraphics();                       //擦除橡皮擦覆盖到的图形
 
 protected:

@@ -7,6 +7,7 @@
 #include <QColorDialog>
 #include <QOpenGLWidget>
 #include <QBoxLayout>
+#include <QFileDialog>
 #include "paint2dwidget.h"
 
 namespace Ui {
@@ -26,6 +27,15 @@ private:
     Paint2DWidget* paint2DWidget;
     QOpenGLWidget* paint3DWidget;
 
+    QMenu* fileMenu;                    //文件菜单
+    QAction* newWindowAction;           //新建窗口
+    QAction* openFileAction;            //打开文件
+    QAction* saveFileAction;            //保存文件
+
+
+
+    void setAction();                   //设置Action
+
 
 
 protected:
@@ -35,8 +45,13 @@ private slots:
     void on_CircleButton_clicked();
     void on_EllipseButton_clicked();
     void on_ColorButton_clicked();
-    void on_ModeCheckBox_clicked();
+    void on_PaintModeCheckBox_clicked();
     void on_EraserButton_clicked();
+
+    //Action
+    void newWindow();
+    void openFile();
+    void saveFile();
 };
 
 #endif // MAINWINDOW_H

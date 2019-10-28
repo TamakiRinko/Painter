@@ -15,7 +15,7 @@ private:
     QPoint center;
     QPoint outPoint;                    //圆周上的一点
     int radius;
-    void bresenHam();
+    void mid();
 };
 
 #endif // CIRCLE_H

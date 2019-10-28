@@ -1,5 +1,12 @@
 #include "graphics.h"
 
+Graphics::~Graphics(){
+    for(int i = 0; i < points.size(); ++i){
+        delete points[i];
+    }
+    points.clear();
+}
+
 QColor& Graphics::getColor(){
     return color;
 }

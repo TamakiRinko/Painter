@@ -31,7 +31,8 @@ SOURCES += \
     linesegment.cpp \
     paint2dwidget.cpp \
     circle.cpp \
-    eraser.cpp
+    eraser.cpp \
+    ellipse.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -39,7 +40,8 @@ HEADERS += \
     linesegment.h \
     paint2dwidget.h \
     circle.h \
-    eraser.h
+    eraser.h \
+    ellipse.h
 
 FORMS += \
         mainwindow.ui

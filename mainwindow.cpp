@@ -7,6 +7,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     resize(800, 600);
 
+    setAction();
+
     paint2DWidget = new Paint2DWidget;
     paint2DWidget->setMode(NONE);
     ui->Canvas->addWidget(paint2DWidget);
@@ -15,6 +17,35 @@ MainWindow::MainWindow(QWidget *parent) :
     paint3DWidget->hide();
 
     ui->ModeLine->setText("None");
+}
+
+void MainWindow::setAction(){
+    fileMenu = ui->menuBar->addMenu("文件");
+
+    //新建窗口
+    newWindowAction = new QAction("新建");
+    newWindowAction->setShortcut(QKeySequence::New);
+    connect(newWindowAction, SIGNAL(triggered(bool)), this, SLOT(newWindow()));
+
+    //打开文件
+    openFileAction = new QAction("打开");
+    openFileAction->setShortcut(QKeySequence::Open);
+    connect(openFileAction, SIGNAL(triggered(bool)), this, SLOT(openFile()));
+
+    //保存文件
+    saveFileAction = new QAction("保存");
+    saveFileAction->setShortcut(QKeySequence::Save);
+    connect(saveFileAction, SIGNAL(triggered(bool)), this, SLOT(saveFile()));
+
+
+
+
+
+
+
+    fileMenu->addAction(newWindowAction);
+    fileMenu->addAction(openFileAction);
+    fileMenu->addAction(saveFileAction);
 }
 
 MainWindow::~MainWindow(){
@@ -40,7 +71,7 @@ void MainWindow::on_ColorButton_clicked(){
     paint2DWidget->setColor(QColorDialog::getColor());
 }
 
-void MainWindow::on_ModeCheckBox_clicked(){
+void MainWindow::on_PaintModeCheckBox_clicked(){
     if(ui->PaintModeCheckBox->isChecked()){
         setWindowTitle("3DPaint");
         paint3DWidget->show();
@@ -63,4 +94,24 @@ void MainWindow::on_ModeCheckBox_clicked(){
 void MainWindow::on_EraserButton_clicked(){
     paint2DWidget->setMode(ERASER);
     ui->ModeLine->setText("Eraser");
+}
+
+/**
+ * @brief MainWindow::newOneFile
+ * 新建一个窗口
+ */
+void MainWindow::newWindow(){
+    MainWindow* newWindow = new MainWindow;
+    newWindow->show();
+}
+
+void MainWindow::openFile(){
+
+}
+
+void MainWindow::saveFile(){
+    QString fileName = QFileDialog::getSaveFileName(this, tr("Save File"), "newPic", tr("Image (*.bmp)"));
+    if(fileName == "")  return;
+    fileName = fileName.toUtf8();
+    paint2DWidget->saveTo(fileName);
 }

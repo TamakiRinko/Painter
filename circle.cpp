@@ -16,14 +16,14 @@ void Circle::setPoint(QPoint point){
 }
 
 bool Circle::isPoint(){
-    return (center == outPoint);
+    return (center.x() == outPoint.x() && center.y() == outPoint.y());
 }
 
 void Circle::drawLogic(){
-    bresenHam();
+    mid();
 }
 
-void Circle::bresenHam(){
+void Circle::mid(){
     int di = 3 - 2 * radius;
     int xi = 0;
     int yi = -radius;

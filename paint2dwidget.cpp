@@ -20,8 +20,8 @@ void Paint2DWidget::setColor(QColor color){
     this->curColor = color;
 }
 
-void Paint2DWidget::drawGraphics(Graphics* graphics){
-    QPainter painter(this);
+void Paint2DWidget::drawGraphics(QPainter& painter, Graphics* graphics){
+//    QPainter painter(this);
     QPen pen;
     if(graphics == nullptr){
         return;
@@ -58,16 +58,28 @@ void Paint2DWidget::eraseGraphics(){
     int offset = 0;
     for(int i: listTmp){
 //        qDebug() << "删除的图形下标:" << i;
-        graphicsList.erase(graphicsList.begin() + i - offset);
+        delete graphicsList[i - offset];                            //释放空间
+        graphicsList.erase(graphicsList.begin() + i - offset);      //移除该图形
         offset++;
     }
 }
 
+void Paint2DWidget::saveTo(QString fileName, const char* format){
+    QImage image = QImage(this->width(),this->height(),QImage::Format_ARGB32);
+    image.fill("white");
+    QPainter painter(&image);
+    for(int i = 0; i < graphicsList.size(); ++i){
+        drawGraphics(painter, graphicsList[i]);
+    }
+    image.save(fileName, format);
+}
+
 
 void Paint2DWidget::paintEvent(QPaintEvent*){
-    drawGraphics(curGraphics);
+    QPainter painter(this);
+    drawGraphics(painter, curGraphics);
     for(int i = 0; i < graphicsList.size(); ++i){
-        drawGraphics(graphicsList[i]);
+        drawGraphics(painter, graphicsList[i]);
     }
 }
 
@@ -104,6 +116,7 @@ void Paint2DWidget::mousePressEvent(QMouseEvent* e){
             break;
         }
         case ELLIPSE:{
+            curGraphics = new Ellipse(point, curColor);
             break;
         }
         case ERASER:{
@@ -144,6 +157,11 @@ void Paint2DWidget::mouseReleaseEvent(QMouseEvent* e){
             break;
         }
         case ELLIPSE:{
+            Ellipse* curEllipse = (Ellipse* )curGraphics;
+            curEllipse->setPoint(point);
+            if(!curEllipse->isPoint()){
+                graphicsList.append(curGraphics);
+            }
             break;
         }
         case ERASER:{                   //释放时删除
@@ -151,12 +169,12 @@ void Paint2DWidget::mouseReleaseEvent(QMouseEvent* e){
             eraser->append(p);
             eraseGraphics();
             eraser->clear();
-            update();
             break;
         }
         default: break;
     }
     curGraphics = nullptr;
+    update();
 }
 
 /**
@@ -180,6 +198,9 @@ void Paint2DWidget::mouseMoveEvent(QMouseEvent* e){
             break;
         }
         case ELLIPSE:{
+            Ellipse* curEllipse = (Ellipse* )curGraphics;
+            curEllipse->setPoint(point);
+            update();
             break;
         }
         case ERASER:{
