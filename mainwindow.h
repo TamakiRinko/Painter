@@ -29,8 +29,8 @@ private:
 
     QMenu* fileMenu;                    //文件菜单
     QAction* newWindowAction;           //新建窗口
-    QAction* openFileAction;            //打开文件
     QAction* saveFileAction;            //保存文件
+    QString fileName;                   //保存的文件名
 
 
 
@@ -39,6 +39,7 @@ private:
 
 
 protected:
+    void closeEvent(QCloseEvent* event);
 
 private slots:
     void on_LineSegmentButton_clicked();
@@ -50,8 +51,7 @@ private slots:
 
     //Action
     void newWindow();
-    void openFile();
-    void saveFile();
+    bool saveFile();
 };
 
 #endif // MAINWINDOW_H

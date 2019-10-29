@@ -6,6 +6,7 @@ Paint2DWidget::Paint2DWidget(QWidget *parent) :
     curColor = DEFAULT_COLOR;
     curGraphics = nullptr;
     eraser = &Eraser::getInstance();
+    isModified = false;
 }
 
 Paint2DWidget::~Paint2DWidget(){
@@ -74,6 +75,10 @@ void Paint2DWidget::saveTo(QString fileName, const char* format){
     image.save(fileName, format);
 }
 
+bool Paint2DWidget::getIsModified(){
+    return isModified;
+}
+
 
 void Paint2DWidget::paintEvent(QPaintEvent*){
     QPainter painter(this);
@@ -82,22 +87,6 @@ void Paint2DWidget::paintEvent(QPaintEvent*){
         drawGraphics(painter, graphicsList[i]);
     }
 }
-
-//void PaintWindow::keyPressEvent(QKeyEvent* e){
-//    switch (curMode) {
-//        case LINESEGMENT:{
-
-//            break;
-//        }
-//        case CIRCLE:{
-//            break;
-//        }
-//        case ELLIPSE:{
-//            break;
-//        }
-//        default: break;
-//    }
-//}
 
 /**
  * @brief PaintWindow::mousePressEvent
@@ -126,6 +115,7 @@ void Paint2DWidget::mousePressEvent(QMouseEvent* e){
         }
         default: break;
     }
+    isModified = true;
 //    //画出该点
 //    pen.setColor(curColor);
 //    painter.setPen(pen);
@@ -173,6 +163,7 @@ void Paint2DWidget::mouseReleaseEvent(QMouseEvent* e){
         }
         default: break;
     }
+    isModified = true;
     curGraphics = nullptr;
     update();
 }
@@ -210,4 +201,5 @@ void Paint2DWidget::mouseMoveEvent(QMouseEvent* e){
         }
         default: break;
     }
+    isModified = true;
 }

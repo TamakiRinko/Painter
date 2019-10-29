@@ -17,6 +17,8 @@ MainWindow::MainWindow(QWidget *parent) :
     paint3DWidget->hide();
 
     ui->ModeLine->setText("None");
+
+    fileName = nullptr;
 }
 
 void MainWindow::setAction(){
@@ -26,11 +28,6 @@ void MainWindow::setAction(){
     newWindowAction = new QAction("新建");
     newWindowAction->setShortcut(QKeySequence::New);
     connect(newWindowAction, SIGNAL(triggered(bool)), this, SLOT(newWindow()));
-
-    //打开文件
-    openFileAction = new QAction("打开");
-    openFileAction->setShortcut(QKeySequence::Open);
-    connect(openFileAction, SIGNAL(triggered(bool)), this, SLOT(openFile()));
 
     //保存文件
     saveFileAction = new QAction("保存");
@@ -44,7 +41,6 @@ void MainWindow::setAction(){
 
 
     fileMenu->addAction(newWindowAction);
-    fileMenu->addAction(openFileAction);
     fileMenu->addAction(saveFileAction);
 }
 
@@ -105,13 +101,33 @@ void MainWindow::newWindow(){
     newWindow->show();
 }
 
-void MainWindow::openFile(){
-
-}
-
-void MainWindow::saveFile(){
-    QString fileName = QFileDialog::getSaveFileName(this, tr("Save File"), "newPic", tr("Image (*.bmp)"));
-    if(fileName == "")  return;
+bool MainWindow::saveFile(){
+    if(fileName == nullptr){
+        fileName = QFileDialog::getSaveFileName(this, tr("Save File"), "newPic", tr("Image (*.bmp)"));
+    }
+    if(fileName == "")  return false;
     fileName = fileName.toUtf8();
     paint2DWidget->saveTo(fileName);
+    return true;
+}
+
+void MainWindow::closeEvent(QCloseEvent* event){
+    if (paint2DWidget->getIsModified()){
+        int temp = QMessageBox::information(this, "Message", "文件未保存，是否保存？", QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
+        if (temp == QMessageBox::Yes){              //保存
+            if(saveFile()){
+                event->accept();
+            }else{
+                event->ignore();
+            }
+        }
+        else if(temp == QMessageBox::No){           //不保存
+            event->accept();
+        }else{                                      //取消关闭
+            event->ignore();
+        }
+    }
+    else{
+        event->accept();
+    }
 }

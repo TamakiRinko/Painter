@@ -21,7 +21,7 @@ enum Mode{
 class Graphics{
 public:
     Graphics(): isErased(false){}
-    ~Graphics();
+    virtual ~Graphics();
     Graphics(QColor c): color(c), isErased(false){}
 //    QVector<Point* >& getPoints();                        //不要有类似的函数，可以直接获得最重要的points
     void append(QPoint* point);
