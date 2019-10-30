@@ -117,7 +117,7 @@
      <layout class="QVBoxLayout" name="Canvas"/>
     </item>
     <item row="0" column="0" colspan="2">
-     <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="1,10,10,10,10,10">
+     <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="1,10,10,10,10,10,10">
       <item>
        <widget class="QCheckBox" name="PaintModeCheckBox">
         <property name="text">
@@ -129,6 +129,13 @@
        <widget class="QPushButton" name="LineSegmentButton">
         <property name="text">
          <string>LineSegment</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="PolygonButton">
+        <property name="text">
+         <string>Polygon</string>
         </property>
        </widget>
       </item>

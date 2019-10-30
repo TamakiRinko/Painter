@@ -46,6 +46,11 @@ void MainWindow::on_LineSegmentButton_clicked(){
     ui->ModeLabel->setText("LineSegment");
 }
 
+void MainWindow::on_PolygonButton_clicked(){
+    paint2DWidget->setMode(POLYGON);
+    ui->ModeLabel->setText("Polygon");
+}
+
 void MainWindow::on_CircleButton_clicked(){
     paint2DWidget->setMode(CIRCLE);
     ui->ModeLabel->setText("Circle");
@@ -146,4 +151,3 @@ void MainWindow::resizeEvent(QResizeEvent*){
     ui->HSpinBox->setValue(this->height());
     ui->WSpinBox->setValue(this->width());
 }
-

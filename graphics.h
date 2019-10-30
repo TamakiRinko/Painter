@@ -16,7 +16,7 @@ const int DEFAULT_WIDTH = 1;
 class Graphics;
 
 enum Mode{
-    NONE, LINESEGMENT, CIRCLE, ELLIPSE, ERASER
+    NONE, LINESEGMENT, POLYGON, CIRCLE, ELLIPSE, ERASER
 };
 
 class Graphics{
@@ -24,7 +24,8 @@ public:
     Graphics(): isErased(false){}
     virtual ~Graphics();
     Graphics(QColor c, int w): color(c), width(w), isErased(false){}
-//    QVector<Point* >& getPoints();                        //不要有类似的函数，可以直接获得最重要的points
+//    QVector<QPoint* >& getPoints();                        //不要有类似的函数，可以直接获得最重要的points
+    const QVector<QPoint* >& getPoints() const;                   //退而求其次，不可修改，只可拿到
     void append(QPoint* point);
     void clear();
     int getNum();
@@ -38,7 +39,7 @@ public:
     QPoint& operator[](int i);
 
     virtual void drawLogic() = 0;
-    virtual bool isPoint() = 0;
+    virtual bool isNotGraphics() = 0;
 protected:
     QVector<QPoint* > points;
     QColor color;

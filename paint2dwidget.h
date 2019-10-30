@@ -7,6 +7,7 @@
 #include "circle.h"
 #include "eraser.h"
 #include "ellipse.h"
+#include "polygon.h"
 #include <QWidget>
 #include <QPen>
 #include <QBrush>
@@ -31,8 +32,9 @@ private:
     int curWidth;                               //当前的宽度
     QVector<Graphics* > graphicsList;           //界面上所有的图形
     Graphics* curGraphics;                      //当前正在画的图形
-    Eraser* eraser;                              //橡皮擦
-    bool isModified;
+    Eraser* eraser;                             //橡皮擦
+    bool isModified;                            //画板是否已经被修改
+    bool isPolygonStart;                        //是否为多边形的开始
 
 //    QPainter painter;                           //画家
 //    QPen pen;                                   //画笔

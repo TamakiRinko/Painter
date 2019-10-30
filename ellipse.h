@@ -10,7 +10,7 @@ public:
     virtual ~Ellipse(){}
     void setPoint(QPoint point);
     void drawLogic();
-    bool isPoint();
+    bool isNotGraphics();
 private:
     int rx;
     int ry;

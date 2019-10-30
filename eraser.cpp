@@ -4,6 +4,10 @@ Eraser::Eraser(){
 
 }
 
+Eraser::~Eraser(){
+    points.clear();
+}
+
 void Eraser::append(QPoint* point){
     points.append(point);
 }

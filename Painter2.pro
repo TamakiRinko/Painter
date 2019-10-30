@@ -32,7 +32,8 @@ SOURCES += \
     paint2dwidget.cpp \
     circle.cpp \
     eraser.cpp \
-    ellipse.cpp
+    ellipse.cpp \
+    polygon.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -41,7 +42,8 @@ HEADERS += \
     paint2dwidget.h \
     circle.h \
     eraser.h \
-    ellipse.h
+    ellipse.h \
+    polygon.h
 
 FORMS += \
         mainwindow.ui

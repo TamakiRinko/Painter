@@ -1,6 +1,6 @@
 #include "ellipse.h"
 
-Ellipse::Ellipse(){
+Ellipse::Ellipse(): Graphics(DEFAULT_COLOR, DEFAULT_WIDTH){
     rx = ry = 0;
 }
 
@@ -15,11 +15,12 @@ void Ellipse::setPoint(QPoint point){
     ry = abs(outPoint.y() - center.y());
 }
 
-bool Ellipse::isPoint(){
+bool Ellipse::isNotGraphics(){
     return (center.x() == outPoint.x() && center.y() == outPoint.y());
 }
 
 void Ellipse::drawLogic(){
+    points.clear();
     mid();
 }
 

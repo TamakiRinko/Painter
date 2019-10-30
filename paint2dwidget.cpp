@@ -8,6 +8,7 @@ Paint2DWidget::Paint2DWidget(QWidget *parent) :
     curGraphics = nullptr;
     eraser = &Eraser::getInstance();
     isModified = false;
+    isPolygonStart = false;
 }
 
 Paint2DWidget::~Paint2DWidget(){
@@ -15,6 +16,9 @@ Paint2DWidget::~Paint2DWidget(){
 }
 
 void Paint2DWidget::setMode(Mode mode){
+    if(mode == POLYGON && curMode != POLYGON){
+        isPolygonStart = true;
+    }
     this->curMode = mode;
 }
 
@@ -27,13 +31,12 @@ void Paint2DWidget::setWidth(int width){
 }
 
 void Paint2DWidget::drawGraphics(QPainter& painter, Graphics* graphics){
-//    QPainter painter(this);
     QPen pen;
     if(graphics == nullptr){
         return;
     }
-    graphics->clear();
-    graphics->drawLogic();
+//    graphics->clear();
+//    graphics->drawLogic();
     pen.setColor(graphics->getColor());
     pen.setWidth(graphics->getWidth());
     painter.setPen(pen);
@@ -112,11 +115,11 @@ void Paint2DWidget::mousePressEvent(QMouseEvent* e){
             break;
         }
         case ELLIPSE:{
-            curGraphics = new Ellipse(point, curColor, curWidth);
+            curGraphics = new Ellipse(point, curColor, curWidth);         //当前为椭圆
             break;
         }
         case ERASER:{
-            QPoint* p = new QPoint(point.x(), point.y());
+            QPoint* p = new QPoint(point.x(), point.y());                 //当前为橡皮擦
             eraser->append(p);
             break;
         }
@@ -136,25 +139,52 @@ void Paint2DWidget::mouseReleaseEvent(QMouseEvent* e){
         case LINESEGMENT:{
             LineSegment* curLine = (LineSegment* )curGraphics;
             curLine->setEndPoint(point);
-            if(!curLine->isPoint()){                                    //可能只是一个点
+            if(!curLine->isNotGraphics()){                                    //可能只是一个点
+                curGraphics->drawLogic();
                 graphicsList.append(curGraphics);                       //加入已有图形列表
+            }
+            curGraphics = nullptr;
+            break;
+        }
+        case POLYGON:{      //对于多边形，只考虑鼠标释放
+            if(isPolygonStart){
+                curGraphics = new Polygon(point, curColor, curWidth);   //新建多边形
+                isPolygonStart = false;
+            }else{
+                Polygon* curPolygon = (Polygon* )curGraphics;
+                curPolygon->setNextPoint(point);
+                if(e->button() == Qt::RightButton){                     //右键点击，结束绘制
+                    curPolygon->complete();
+                    if(!curGraphics->isNotGraphics()){
+                        curGraphics->drawLogic();
+                        graphicsList.append(curGraphics);
+                    }
+                    isPolygonStart = true;
+                    curGraphics = nullptr;
+                }else{
+                    curGraphics->drawLogic();
+                }
             }
             break;
         }
         case CIRCLE:{
             Circle* curCircle = (Circle* )curGraphics;
             curCircle->setPoint(point);
-            if(!curCircle->isPoint()){
+            if(!curCircle->isNotGraphics()){
+                curGraphics->drawLogic();
                 graphicsList.append(curGraphics);
             }
+            curGraphics = nullptr;
             break;
         }
         case ELLIPSE:{
             Ellipse* curEllipse = (Ellipse* )curGraphics;
             curEllipse->setPoint(point);
-            if(!curEllipse->isPoint()){
+            if(!curEllipse->isNotGraphics()){
+                curGraphics->drawLogic();
                 graphicsList.append(curGraphics);
             }
+            curGraphics = nullptr;
             break;
         }
         case ERASER:{                   //释放时删除
@@ -162,12 +192,12 @@ void Paint2DWidget::mouseReleaseEvent(QMouseEvent* e){
             eraser->append(p);
             eraseGraphics();
             eraser->clear();
+            curGraphics = nullptr;
             break;
         }
         default: break;
     }
     isModified = true;
-    curGraphics = nullptr;
     update();
 }
 
@@ -182,18 +212,21 @@ void Paint2DWidget::mouseMoveEvent(QMouseEvent* e){
         case LINESEGMENT:{
             LineSegment* curLine = (LineSegment* )curGraphics;
             curLine->setEndPoint(point);
+            curGraphics->drawLogic();
             update();
             break;
         }
         case CIRCLE:{
             Circle* curCircle = (Circle* )curGraphics;
             curCircle->setPoint(point);
+            curGraphics->drawLogic();
             update();
             break;
         }
         case ELLIPSE:{
             Ellipse* curEllipse = (Ellipse* )curGraphics;
             curEllipse->setPoint(point);
+            curGraphics->drawLogic();
             update();
             break;
         }

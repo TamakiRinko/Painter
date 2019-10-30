@@ -1,7 +1,27 @@
 #include "linesegment.h"
 
+LineSegment::LineSegment(): Graphics(DEFAULT_COLOR, DEFAULT_WIDTH){
+
+}
+
 LineSegment::LineSegment(QPoint startPoint, QColor color, int width): Graphics(color, width){
     this->startPoint = startPoint;
+}
+
+/**
+ * @brief LineSegment::LineSegment
+ * @param startPoint
+ * @param endPoint
+ * @param color
+ * @param width
+ * 两个点已经给出，点集直接计算
+ */
+LineSegment::LineSegment(QPoint startPoint, QPoint endPoint, QColor color, int width): Graphics(color, width){
+    this->startPoint = startPoint;
+    this->endPoint = endPoint;
+    if(!isNotGraphics()){
+        drawLogic();
+    }
 }
 
 void LineSegment::setEndPoint(QPoint endPoint){
@@ -9,10 +29,11 @@ void LineSegment::setEndPoint(QPoint endPoint){
 }
 
 void LineSegment::drawLogic(){
+    points.clear();
     bresenHam();
 }
 
-bool LineSegment::isPoint(){
+bool LineSegment::isNotGraphics(){
     return (startPoint == endPoint);
 }
 

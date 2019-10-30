@@ -1,6 +1,6 @@
 #include "circle.h"
 
-Circle::Circle(){
+Circle::Circle(): Graphics(DEFAULT_COLOR, DEFAULT_WIDTH){
     radius = 0;
 }
 
@@ -15,11 +15,12 @@ void Circle::setPoint(QPoint point){
                    (outPoint.y() - center.y()) * (outPoint.y() - center.y())));
 }
 
-bool Circle::isPoint(){
+bool Circle::isNotGraphics(){
     return (center.x() == outPoint.x() && center.y() == outPoint.y());
 }
 
 void Circle::drawLogic(){
+    points.clear();
     mid();
 }
 

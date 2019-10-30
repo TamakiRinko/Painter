@@ -11,7 +11,7 @@ public:
     virtual ~Circle(){}
     void setPoint(QPoint point);
     void drawLogic();
-    bool isPoint();
+    bool isNotGraphics();
 private:
     QPoint center;
     QPoint outPoint;                    //圆周上的一点

@@ -15,6 +15,10 @@ int Graphics::getWidth(){
     return width;
 }
 
+const QVector<QPoint* >& Graphics::getPoints() const{
+    return points;
+}
+
 void Graphics::append(QPoint* point){
     points.append(point);
 }
