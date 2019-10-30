@@ -4,8 +4,9 @@ LineSegment::LineSegment(): Graphics(DEFAULT_COLOR, DEFAULT_WIDTH){
 
 }
 
-LineSegment::LineSegment(QPoint startPoint, QColor color, int width): Graphics(color, width){
+LineSegment::LineSegment(QPoint startPoint, QColor color, int width, LineAlgorithm alg): Graphics(color, width){
     this->startPoint = startPoint;
+    this->alg = alg;
 }
 
 /**
@@ -16,9 +17,10 @@ LineSegment::LineSegment(QPoint startPoint, QColor color, int width): Graphics(c
  * @param width
  * 两个点已经给出，点集直接计算
  */
-LineSegment::LineSegment(QPoint startPoint, QPoint endPoint, QColor color, int width): Graphics(color, width){
+LineSegment::LineSegment(QPoint startPoint, QPoint endPoint, QColor color, int width, LineAlgorithm alg): Graphics(color, width){
     this->startPoint = startPoint;
     this->endPoint = endPoint;
+    this->alg = alg;
     if(!isNotGraphics()){
         drawLogic();
     }
@@ -30,7 +32,11 @@ void LineSegment::setEndPoint(QPoint endPoint){
 
 void LineSegment::drawLogic(){
     points.clear();
-    bresenHam();
+    if(alg == BRESENHAM){
+        bresenHam();
+    }else{
+        DDA();
+    }
 }
 
 bool LineSegment::isNotGraphics(){
@@ -98,4 +104,56 @@ void LineSegment::bresenHam(){
             old = temp;
         }while(old->x() != endPoint.x()|| old->y() != endPoint.y());
     }
+}
+
+void LineSegment::DDA(){
+    points.append(&startPoint);
+    int flagX = 1;      //x增大or减小
+    int flagY = 1;     //y增大or减小
+    int dx = endPoint.x() - startPoint.x();
+    int dy = endPoint.y() - startPoint.y();
+    if(dx == 0){                                            //垂直线
+        int direction = (dy > 0)?1:-1;                      //向上/下
+        int index = direction;
+        int tempX = startPoint.x();
+        QPoint* tempPoint;
+        while(index != dy){
+            tempPoint = new QPoint(tempX, startPoint.y() + index);
+            points.append(tempPoint);
+            index += direction;
+        }
+        points.append(&endPoint);
+        return;
+    }
+
+    if(dx < 0){
+        flagX = -1;
+        dx = -dx;
+    }
+    if(dy < 0){         //y往下变大
+        flagY = -1;
+        dy = -dy;
+    }
+
+    double m = (double)dy / (double)dx;
+    double k = 0;
+    QPoint* temp = &startPoint;
+    if(m > 1){                                          //Δy = 1，Δx = 1/m
+        m = m * flagX;
+        m = 1 / m;
+        while(temp->y() != endPoint.y()){
+            k += m;
+            temp = new QPoint(int(startPoint.x() + k), temp->y() + flagY);
+            points.append(temp);
+        }
+    }else{                                              //Δy = m，Δx = 1
+        m = m * flagY;
+        while(temp->x() != endPoint.x()){
+            k += m;
+            temp = new QPoint(temp->x() + flagX, int(startPoint.y() + k));
+            points.append(temp);
+        }
+    }
+    points.append(&endPoint);
+    return;
 }

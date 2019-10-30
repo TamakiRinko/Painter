@@ -18,7 +18,6 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->Canvas->addWidget(paint3DWidget);
     paint3DWidget->hide();
 
-
 }
 
 void MainWindow::setAction(){
@@ -44,7 +43,20 @@ MainWindow::~MainWindow(){
 
 void MainWindow::on_LineSegmentButton_clicked(){
     paint2DWidget->setMode(LINESEGMENT);
-    ui->ModeLabel->setText("LineSegment");
+
+    QMessageBox box(QMessageBox::Warning, "Message", "DDA or BresenHam?\n");
+    box.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+    box.setButtonText(QMessageBox::Yes, QString("DDA"));
+    box.setButtonText(QMessageBox::No, QString("BresenHam"));
+    int button = box.exec();
+    if (button == QMessageBox::Yes){              //保存
+        paint2DWidget->setLineAlgorithm(DDA);
+        ui->ModeLabel->setText("LineSegment, DDA");
+    }
+    else if(button == QMessageBox::No){           //不保存
+        paint2DWidget->setLineAlgorithm(BRESENHAM);
+        ui->ModeLabel->setText("LineSegment, BresenHam");
+    }
 }
 
 void MainWindow::on_RandomLineButton_clicked(){
@@ -54,7 +66,20 @@ void MainWindow::on_RandomLineButton_clicked(){
 
 void MainWindow::on_PolygonButton_clicked(){
     paint2DWidget->setMode(POLYGON);
-    ui->ModeLabel->setText("Polygon");
+//    ui->ModeLabel->setText("Polygon");
+    QMessageBox box(QMessageBox::Warning, "Message", "DDA or BresenHam?\n");
+    box.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+    box.setButtonText(QMessageBox::Yes, QString("DDA"));
+    box.setButtonText(QMessageBox::No, QString("BresenHam"));
+    int button = box.exec();
+    if (button == QMessageBox::Yes){              //保存
+        paint2DWidget->setLineAlgorithm(DDA);
+        ui->ModeLabel->setText("Polygon, DDA");
+    }
+    else if(button == QMessageBox::No){           //不保存
+        paint2DWidget->setLineAlgorithm(BRESENHAM);
+        ui->ModeLabel->setText("Polygon, BresenHam");
+    }
 }
 
 void MainWindow::on_CircleButton_clicked(){

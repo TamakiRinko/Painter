@@ -8,6 +8,7 @@ Paint2DWidget::Paint2DWidget(QWidget *parent) :
     curGraphics = nullptr;
     eraser = &Eraser::getInstance();
     isModified = false;
+    curAlg = BRESENHAM;
 //    image = new QImage(this->size(), QImage::Format_ARGB32);
 //    image->load(tr("D:/Myfolder/Desktop/11.bmp"));
 }
@@ -26,6 +27,10 @@ void Paint2DWidget::setColor(QColor color){
 
 void Paint2DWidget::setWidth(int width){
     this->curWidth = width;
+}
+
+void Paint2DWidget::setLineAlgorithm(LineAlgorithm alg){
+    curAlg = alg;
 }
 
 void Paint2DWidget::drawGraphics(QPainter& painter, Graphics* graphics){
@@ -122,7 +127,7 @@ void Paint2DWidget::mousePressEvent(QMouseEvent* e){
     QPoint point(e->x(), e->y());
     switch (curMode) {
         case LINESEGMENT:{
-            curGraphics = new LineSegment(point, curColor, curWidth);     //当前为线段
+            curGraphics = new LineSegment(point, curColor, curWidth, curAlg);     //当前为线段
             break;
         }
         case RANDOMLINE:{
@@ -177,7 +182,7 @@ void Paint2DWidget::mouseReleaseEvent(QMouseEvent* e){
         }
         case POLYGON:{      //对于多边形，只考虑鼠标释放
             if(curGraphics == nullptr){
-                curGraphics = new Polygon(point, curColor, curWidth);   //新建多边形
+                curGraphics = new Polygon(point, curColor, curWidth, curAlg);   //新建多边形
             }else{
                 Polygon* curPolygon = (Polygon* )curGraphics;
                 curPolygon->setNextPoint(point);

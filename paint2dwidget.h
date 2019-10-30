@@ -24,6 +24,7 @@ public:
     void setMode(Mode mode);
     void setColor(QColor color);
     void setWidth(int width);
+    void setLineAlgorithm(LineAlgorithm alg);
     void saveTo(QString fileName, const char* format = "bmp");            //保存为指定格式
     bool getIsModified();
     void withDraw();                            //撤回
@@ -32,14 +33,11 @@ private:
     Mode curMode;                               //当前的模式
     QColor curColor;                            //当前选择的颜色
     int curWidth;                               //当前的宽度
+    LineAlgorithm curAlg;                       //当前线段算法，默认BresenHam
     QVector<Graphics* > graphicsList;           //界面上所有的图形
     Graphics* curGraphics;                      //当前正在画的图形
     Eraser* eraser;                             //橡皮擦
     bool isModified;                            //画板是否已经被修改
-//    bool isPolygonStart;                        //是否为多边形的开始
-
-//    QPainter painter;                           //画家
-//    QPen pen;                                   //画笔
 
 //    QImage* image;
 

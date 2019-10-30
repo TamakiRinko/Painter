@@ -10,14 +10,21 @@
 #include <QList>
 #include <math.h>
 using namespace std;
-const QColor DEFAULT_COLOR = Qt::black;
-const int DEFAULT_WIDTH = 1;
+
 
 class Graphics;
 
 enum Mode{
     NONE, LINESEGMENT, RANDOMLINE, POLYGON, CIRCLE, ELLIPSE, ERASER
 };
+
+enum LineAlgorithm{
+    DDA, BRESENHAM
+};
+
+const QColor DEFAULT_COLOR = Qt::black;
+const int DEFAULT_WIDTH = 1;
+const LineAlgorithm DEFAULT_ALG = LineAlgorithm::BRESENHAM;
 
 class Graphics{
 public:

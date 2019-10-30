@@ -7,7 +7,7 @@
 class Polygon: public Graphics{
 public:
     Polygon();
-    Polygon(QPoint startPoint, QColor color = DEFAULT_COLOR, int width = DEFAULT_WIDTH);
+    Polygon(QPoint startPoint, QColor color = DEFAULT_COLOR, int width = DEFAULT_WIDTH, LineAlgorithm alg = LineAlgorithm::DDA);
     void setNextPoint(QPoint nextPoint);
     void complete();
     void withDraw();
@@ -17,8 +17,9 @@ public:
 private:
     QPoint* startPoint;
     QVector<QPoint*> vertexList;                    //多边形顶点集
-    int num;                                        //当前有多少顶点
     QVector<LineSegment*> lineList;                 //多边形边集
+    int num;                                        //当前有多少顶点
+    LineAlgorithm alg;
 };
 
 #endif // POLYGON_H

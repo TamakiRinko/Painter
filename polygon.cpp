@@ -3,11 +3,12 @@
 Polygon::Polygon(): Graphics(DEFAULT_COLOR, DEFAULT_WIDTH){
 }
 
-Polygon::Polygon(QPoint startPoint, QColor color, int width): Graphics(color, width){
+Polygon::Polygon(QPoint startPoint, QColor color, int width, LineAlgorithm alg): Graphics(color, width){
     this->startPoint = new QPoint(startPoint);
 //    this->curPoint = startPoint;
     vertexList.append(this->startPoint);
     num = 1;
+    this->alg = alg;
 }
 
 void Polygon::setNextPoint(QPoint nextPoint){
@@ -17,7 +18,7 @@ void Polygon::setNextPoint(QPoint nextPoint){
     QPoint* next = new QPoint(nextPoint);
     vertexList.append(next);
     num++;
-    LineSegment* line = new LineSegment(*(vertexList[num - 2]), *(vertexList[num - 1]));
+    LineSegment* line = new LineSegment(*(vertexList[num - 2]), *(vertexList[num - 1]), color, width, alg);
     lineList.append(line);
 }
 
@@ -61,6 +62,6 @@ bool Polygon::isNotGraphics(){
  * 首尾相连，结束绘制
  */
 void Polygon::complete(){
-    LineSegment* line = new LineSegment(*(vertexList[0]), *(vertexList[num - 1]));
+    LineSegment* line = new LineSegment(*(vertexList[0]), *(vertexList[num - 1]), color, width, alg);
     lineList.append(line);
 }
