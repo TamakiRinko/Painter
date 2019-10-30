@@ -41,6 +41,16 @@
       <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,9,1,1,1">
        <item>
         <widget class="QLabel" name="ModeLabel">
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="lineWidth">
+          <number>1</number>
+         </property>
          <property name="text">
           <string>None</string>
          </property>

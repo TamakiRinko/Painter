@@ -6,6 +6,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow){
     ui->setupUi(this);
     resize(800, 600);
+    setWindowTitle("Painter");
     fileName = nullptr;
 
     setAction();
