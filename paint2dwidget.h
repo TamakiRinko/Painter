@@ -41,6 +41,8 @@ private:
 //    QPainter painter;                           //画家
 //    QPen pen;                                   //画笔
 
+//    QImage* image;
+
     void drawGraphics(QPainter& painter, Graphics* graphics);
     void eraseGraphics();                       //擦除橡皮擦覆盖到的图形
 

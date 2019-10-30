@@ -8,6 +8,8 @@ Paint2DWidget::Paint2DWidget(QWidget *parent) :
     curGraphics = nullptr;
     eraser = &Eraser::getInstance();
     isModified = false;
+//    image = new QImage(this->size(), QImage::Format_ARGB32);
+//    image->load(tr("D:/Myfolder/Desktop/11.bmp"));
 }
 
 Paint2DWidget::~Paint2DWidget(){
@@ -104,6 +106,7 @@ void Paint2DWidget::withDraw(){
 
 void Paint2DWidget::paintEvent(QPaintEvent*){
     QPainter painter(this);
+//    painter.drawImage(0, 0, *image);
     drawGraphics(painter, curGraphics);
     for(int i = 0; i < graphicsList.size(); ++i){
         drawGraphics(painter, graphicsList[i]);
