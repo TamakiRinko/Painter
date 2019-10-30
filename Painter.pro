@@ -33,7 +33,8 @@ SOURCES += \
     circle.cpp \
     eraser.cpp \
     ellipse.cpp \
-    polygon.cpp
+    polygon.cpp \
+    randomline.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -43,7 +44,8 @@ HEADERS += \
     circle.h \
     eraser.h \
     ellipse.h \
-    polygon.h
+    polygon.h \
+    randomline.h
 
 FORMS += \
         mainwindow.ui

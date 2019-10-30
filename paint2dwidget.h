@@ -8,6 +8,7 @@
 #include "eraser.h"
 #include "ellipse.h"
 #include "polygon.h"
+#include "randomline.h"
 #include <QWidget>
 #include <QPen>
 #include <QBrush>

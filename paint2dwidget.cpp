@@ -122,6 +122,10 @@ void Paint2DWidget::mousePressEvent(QMouseEvent* e){
             curGraphics = new LineSegment(point, curColor, curWidth);     //当前为线段
             break;
         }
+        case RANDOMLINE:{
+            curGraphics = new RandomLine(point, curColor, curWidth);      //当前为随机线
+            break;
+        }
         case CIRCLE:{
             curGraphics = new Circle(point, curColor, curWidth);          //当前为圆
             break;
@@ -151,9 +155,19 @@ void Paint2DWidget::mouseReleaseEvent(QMouseEvent* e){
         case LINESEGMENT:{
             LineSegment* curLine = (LineSegment* )curGraphics;
             curLine->setEndPoint(point);
-            if(!curLine->isNotGraphics()){                                    //可能只是一个点
+            if(!curLine->isNotGraphics()){                                      //可能只是一个点
                 curGraphics->drawLogic();
-                graphicsList.append(curGraphics);                       //加入已有图形列表
+                graphicsList.append(curGraphics);                               //加入已有图形列表
+            }
+            curGraphics = nullptr;
+            break;
+        }
+        case RANDOMLINE:{
+            RandomLine* curRandomLine = (RandomLine* )curGraphics;
+            curRandomLine->setPoint(point);
+            if(!curRandomLine->isNotGraphics()){
+                curGraphics->drawLogic();
+                graphicsList.append(curGraphics);
             }
             curGraphics = nullptr;
             break;
@@ -171,7 +185,7 @@ void Paint2DWidget::mouseReleaseEvent(QMouseEvent* e){
                         graphicsList.append(curGraphics);
                     }
                     curGraphics = nullptr;
-                }else{
+                }else{                                                  //左键点击，继续绘制
                     curGraphics->drawLogic();
                 }
             }
@@ -222,6 +236,13 @@ void Paint2DWidget::mouseMoveEvent(QMouseEvent* e){
         case LINESEGMENT:{
             LineSegment* curLine = (LineSegment* )curGraphics;
             curLine->setEndPoint(point);
+            curGraphics->drawLogic();
+            update();
+            break;
+        }
+        case RANDOMLINE:{
+            RandomLine* curRandomLine = (RandomLine* )curGraphics;
+            curRandomLine->setPoint(point);
             curGraphics->drawLogic();
             update();
             break;

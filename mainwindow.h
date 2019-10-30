@@ -59,6 +59,7 @@ private slots:
     //Action
     void newWindow();
     bool saveFile();
+    void on_RandomLineButton_clicked();
 };
 
 #endif // MAINWINDOW_H

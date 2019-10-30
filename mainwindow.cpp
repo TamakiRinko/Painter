@@ -47,6 +47,11 @@ void MainWindow::on_LineSegmentButton_clicked(){
     ui->ModeLabel->setText("LineSegment");
 }
 
+void MainWindow::on_RandomLineButton_clicked(){
+    paint2DWidget->setMode(RANDOMLINE);
+    ui->ModeLabel->setText("RandomLine");
+}
+
 void MainWindow::on_PolygonButton_clicked(){
     paint2DWidget->setMode(POLYGON);
     ui->ModeLabel->setText("Polygon");
