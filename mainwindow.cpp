@@ -91,6 +91,11 @@ void MainWindow::on_EraserButton_clicked(){
     ui->ModeLabel->setText("Eraser");
 }
 
+void MainWindow::on_WithDrawButton_clicked(){
+    ui->ModeLabel->setText("WithDraw");
+    paint2DWidget->withDraw();
+}
+
 void MainWindow::on_WidthSpinBox_valueChanged(int arg1){
     paint2DWidget->setWidth(arg1);
 }

@@ -1,7 +1,6 @@
 #include "polygon.h"
 
 Polygon::Polygon(): Graphics(DEFAULT_COLOR, DEFAULT_WIDTH){
-
 }
 
 Polygon::Polygon(QPoint startPoint, QColor color, int width): Graphics(color, width){
@@ -20,6 +19,21 @@ void Polygon::setNextPoint(QPoint nextPoint){
     num++;
     LineSegment* line = new LineSegment(*(vertexList[num - 2]), *(vertexList[num - 1]));
     lineList.append(line);
+}
+
+/**
+ * @brief Polygon::withDraw
+ * 撤回至上一笔
+ */
+void Polygon::withDraw(){
+    if(!lineList.isEmpty()){
+        lineList.pop_back();
+    }
+    if(num > 1){
+        vertexList.pop_back();
+        num--;
+    }
+    drawLogic();
 }
 
 /**

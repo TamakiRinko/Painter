@@ -8,7 +8,6 @@ Paint2DWidget::Paint2DWidget(QWidget *parent) :
     curGraphics = nullptr;
     eraser = &Eraser::getInstance();
     isModified = false;
-    isPolygonStart = false;
 }
 
 Paint2DWidget::~Paint2DWidget(){
@@ -16,9 +15,6 @@ Paint2DWidget::~Paint2DWidget(){
 }
 
 void Paint2DWidget::setMode(Mode mode){
-    if(mode == POLYGON && curMode != POLYGON){
-        isPolygonStart = true;
-    }
     this->curMode = mode;
 }
 
@@ -89,6 +85,22 @@ bool Paint2DWidget::getIsModified(){
     return isModified;
 }
 
+/**
+ * @brief Paint2DWidget::withDraw
+ * 撤回，当为多边形时只撤回上一笔
+ */
+void Paint2DWidget::withDraw(){
+    if(curMode == POLYGON && curGraphics != nullptr){       //可能该多边形恰巧画完
+        Polygon* curPolygon = (Polygon* )curGraphics;
+        curPolygon->withDraw();
+    }else{
+        if(!graphicsList.isEmpty()){
+            graphicsList.pop_back();
+        }
+    }
+    update();
+}
+
 
 void Paint2DWidget::paintEvent(QPaintEvent*){
     QPainter painter(this);
@@ -147,9 +159,8 @@ void Paint2DWidget::mouseReleaseEvent(QMouseEvent* e){
             break;
         }
         case POLYGON:{      //对于多边形，只考虑鼠标释放
-            if(isPolygonStart){
+            if(curGraphics == nullptr){
                 curGraphics = new Polygon(point, curColor, curWidth);   //新建多边形
-                isPolygonStart = false;
             }else{
                 Polygon* curPolygon = (Polygon* )curGraphics;
                 curPolygon->setNextPoint(point);
@@ -159,7 +170,6 @@ void Paint2DWidget::mouseReleaseEvent(QMouseEvent* e){
                         curGraphics->drawLogic();
                         graphicsList.append(curGraphics);
                     }
-                    isPolygonStart = true;
                     curGraphics = nullptr;
                 }else{
                     curGraphics->drawLogic();

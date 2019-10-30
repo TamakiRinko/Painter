@@ -10,6 +10,7 @@ public:
     Polygon(QPoint startPoint, QColor color = DEFAULT_COLOR, int width = DEFAULT_WIDTH);
     void setNextPoint(QPoint nextPoint);
     void complete();
+    void withDraw();
     virtual ~Polygon(){}
     void drawLogic();
     bool isNotGraphics();

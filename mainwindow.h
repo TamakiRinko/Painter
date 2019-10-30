@@ -50,6 +50,8 @@ private slots:
     void on_ColorButton_clicked();
     void on_PaintModeCheckBox_clicked();
     void on_EraserButton_clicked();
+    void on_PolygonButton_clicked();
+    void on_WithDrawButton_clicked();
     void on_WidthSpinBox_valueChanged(int arg1);
     void on_WSpinBox_valueChanged(int arg1);
     void on_HSpinBox_valueChanged(int arg1);
@@ -57,7 +59,6 @@ private slots:
     //Action
     void newWindow();
     bool saveFile();
-    void on_PolygonButton_clicked();
 };
 
 #endif // MAINWINDOW_H
