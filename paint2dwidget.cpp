@@ -4,6 +4,7 @@ Paint2DWidget::Paint2DWidget(QWidget *parent) :
     QWidget(parent){
     curMode = NONE;
     curColor = DEFAULT_COLOR;
+    curWidth = DEFAULT_WIDTH;
     curGraphics = nullptr;
     eraser = &Eraser::getInstance();
     isModified = false;
@@ -21,6 +22,10 @@ void Paint2DWidget::setColor(QColor color){
     this->curColor = color;
 }
 
+void Paint2DWidget::setWidth(int width){
+    this->curWidth = width;
+}
+
 void Paint2DWidget::drawGraphics(QPainter& painter, Graphics* graphics){
 //    QPainter painter(this);
     QPen pen;
@@ -30,6 +35,7 @@ void Paint2DWidget::drawGraphics(QPainter& painter, Graphics* graphics){
     graphics->clear();
     graphics->drawLogic();
     pen.setColor(graphics->getColor());
+    pen.setWidth(graphics->getWidth());
     painter.setPen(pen);
     for(int i = 0; i < graphics->getNum(); ++i){
         painter.drawPoint((*graphics)[i]);
@@ -54,13 +60,13 @@ void Paint2DWidget::eraseGraphics(){
     }
     //对set由小到大排序
     QList<int> listTmp = QList<int>::fromSet(eraserSet);
-    qSort(listTmp);
+    sort(listTmp.begin(), listTmp.end());
 
     int offset = 0;
     for(int i: listTmp){
 //        qDebug() << "删除的图形下标:" << i;
-        delete graphicsList[i - offset];                            //释放空间
-        graphicsList.erase(graphicsList.begin() + i - offset);      //移除该图形
+        graphicsList.erase(graphicsList.begin() + i - offset);      //移除该图形，已经调用析构函数
+//        delete graphicsList[i - offset];                            //释放空间
         offset++;
     }
 }
@@ -73,6 +79,7 @@ void Paint2DWidget::saveTo(QString fileName, const char* format){
         drawGraphics(painter, graphicsList[i]);
     }
     image.save(fileName, format);
+    isModified = false;
 }
 
 bool Paint2DWidget::getIsModified(){
@@ -97,15 +104,15 @@ void Paint2DWidget::mousePressEvent(QMouseEvent* e){
     QPoint point(e->x(), e->y());
     switch (curMode) {
         case LINESEGMENT:{
-            curGraphics = new LineSegment(point, curColor);     //当前为线段
+            curGraphics = new LineSegment(point, curColor, curWidth);     //当前为线段
             break;
         }
         case CIRCLE:{
-            curGraphics = new Circle(point, curColor);          //当前为圆
+            curGraphics = new Circle(point, curColor, curWidth);          //当前为圆
             break;
         }
         case ELLIPSE:{
-            curGraphics = new Ellipse(point, curColor);
+            curGraphics = new Ellipse(point, curColor, curWidth);
             break;
         }
         case ERASER:{
@@ -116,10 +123,6 @@ void Paint2DWidget::mousePressEvent(QMouseEvent* e){
         default: break;
     }
     isModified = true;
-//    //画出该点
-//    pen.setColor(curColor);
-//    painter.setPen(pen);
-//    painter.drawPoint(point);
 }
 
 /**

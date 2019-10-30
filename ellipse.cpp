@@ -4,7 +4,7 @@ Ellipse::Ellipse(){
     rx = ry = 0;
 }
 
-Ellipse::Ellipse(QPoint center, QColor color): Graphics(color){
+Ellipse::Ellipse(QPoint center, QColor color, int width): Graphics(color, width){
     this->center = center;
     rx = ry = 0;
 }

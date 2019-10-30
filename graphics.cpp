@@ -11,6 +11,10 @@ QColor& Graphics::getColor(){
     return color;
 }
 
+int Graphics::getWidth(){
+    return width;
+}
+
 void Graphics::append(QPoint* point){
     points.append(point);
 }

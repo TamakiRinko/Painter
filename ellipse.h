@@ -6,7 +6,8 @@
 class Ellipse: public Graphics{
 public:
     Ellipse();
-    Ellipse(QPoint center, QColor color = DEFAULT_COLOR);
+    Ellipse(QPoint center, QColor color = DEFAULT_COLOR, int width = DEFAULT_WIDTH);
+    virtual ~Ellipse(){}
     void setPoint(QPoint point);
     void drawLogic();
     bool isPoint();

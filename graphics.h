@@ -11,6 +11,7 @@
 #include <math.h>
 using namespace std;
 const QColor DEFAULT_COLOR = Qt::black;
+const int DEFAULT_WIDTH = 1;
 
 class Graphics;
 
@@ -22,7 +23,7 @@ class Graphics{
 public:
     Graphics(): isErased(false){}
     virtual ~Graphics();
-    Graphics(QColor c): color(c), isErased(false){}
+    Graphics(QColor c, int w): color(c), width(w), isErased(false){}
 //    QVector<Point* >& getPoints();                        //不要有类似的函数，可以直接获得最重要的points
     void append(QPoint* point);
     void clear();
@@ -32,6 +33,7 @@ public:
     QVector<QPoint* >::iterator getBeginIterator();
     QVector<QPoint* >::iterator getEndIterator();
     QColor& getColor();
+    int getWidth();
 
     QPoint& operator[](int i);
 
@@ -40,6 +42,7 @@ public:
 protected:
     QVector<QPoint* > points;
     QColor color;
+    int width;                                              //像素
     bool isErased;                                          //是否已经被删除
 };
 

@@ -4,7 +4,7 @@ Circle::Circle(){
     radius = 0;
 }
 
-Circle::Circle(QPoint center, QColor color): Graphics(color){
+Circle::Circle(QPoint center, QColor color, int width): Graphics(color, width){
     this->center = center;
     radius = 0;
 }

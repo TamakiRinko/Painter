@@ -8,6 +8,7 @@
 #include <QOpenGLWidget>
 #include <QBoxLayout>
 #include <QFileDialog>
+#include <QSpinBox>
 #include "paint2dwidget.h"
 
 namespace Ui {
@@ -40,6 +41,7 @@ private:
 
 protected:
     void closeEvent(QCloseEvent* event);
+    void resizeEvent(QResizeEvent *event);
 
 private slots:
     void on_LineSegmentButton_clicked();
@@ -48,6 +50,9 @@ private slots:
     void on_ColorButton_clicked();
     void on_PaintModeCheckBox_clicked();
     void on_EraserButton_clicked();
+    void on_WidthSpinBox_valueChanged(int arg1);
+    void on_WSpinBox_valueChanged(int arg1);
+    void on_HSpinBox_valueChanged(int arg1);
 
     //Action
     void newWindow();

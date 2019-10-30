@@ -1,6 +1,6 @@
 #include "linesegment.h"
 
-LineSegment::LineSegment(QPoint startPoint, QColor color): Graphics(color){
+LineSegment::LineSegment(QPoint startPoint, QColor color, int width): Graphics(color, width){
     this->startPoint = startPoint;
 }
 

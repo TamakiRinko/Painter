@@ -6,6 +6,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow){
     ui->setupUi(this);
     resize(800, 600);
+    fileName = nullptr;
 
     setAction();
 
@@ -16,9 +17,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->Canvas->addWidget(paint3DWidget);
     paint3DWidget->hide();
 
-    ui->ModeLine->setText("None");
 
-    fileName = nullptr;
 }
 
 void MainWindow::setAction(){
@@ -34,12 +33,6 @@ void MainWindow::setAction(){
     saveFileAction->setShortcut(QKeySequence::Save);
     connect(saveFileAction, SIGNAL(triggered(bool)), this, SLOT(saveFile()));
 
-
-
-
-
-
-
     fileMenu->addAction(newWindowAction);
     fileMenu->addAction(saveFileAction);
 }
@@ -50,17 +43,17 @@ MainWindow::~MainWindow(){
 
 void MainWindow::on_LineSegmentButton_clicked(){
     paint2DWidget->setMode(LINESEGMENT);
-    ui->ModeLine->setText("LineSegment");
+    ui->ModeLabel->setText("LineSegment");
 }
 
 void MainWindow::on_CircleButton_clicked(){
     paint2DWidget->setMode(CIRCLE);
-    ui->ModeLine->setText("Circle");
+    ui->ModeLabel->setText("Circle");
 }
 
 void MainWindow::on_EllipseButton_clicked(){
     paint2DWidget->setMode(ELLIPSE);
-    ui->ModeLine->setText("Ellipse");
+    ui->ModeLabel->setText("Ellipse");
 }
 
 void MainWindow::on_ColorButton_clicked(){
@@ -89,7 +82,19 @@ void MainWindow::on_PaintModeCheckBox_clicked(){
 
 void MainWindow::on_EraserButton_clicked(){
     paint2DWidget->setMode(ERASER);
-    ui->ModeLine->setText("Eraser");
+    ui->ModeLabel->setText("Eraser");
+}
+
+void MainWindow::on_WidthSpinBox_valueChanged(int arg1){
+    paint2DWidget->setWidth(arg1);
+}
+
+void MainWindow::on_WSpinBox_valueChanged(int arg1){
+    resize(arg1, this->height());
+}
+
+void MainWindow::on_HSpinBox_valueChanged(int arg1){
+    resize(this->width(), arg1);
 }
 
 /**
@@ -131,3 +136,14 @@ void MainWindow::closeEvent(QCloseEvent* event){
         event->accept();
     }
 }
+
+/**
+ * @brief MainWindow::resizeEvent
+ * @param event
+ * 检测窗口改变，调整大小
+ */
+void MainWindow::resizeEvent(QResizeEvent*){
+    ui->HSpinBox->setValue(this->height());
+    ui->WSpinBox->setValue(this->width());
+}
+
