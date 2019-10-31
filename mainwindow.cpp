@@ -44,7 +44,7 @@ MainWindow::~MainWindow(){
 void MainWindow::on_LineSegmentButton_clicked(){
     paint2DWidget->setMode(LINESEGMENT);
 
-    QMessageBox box(QMessageBox::Warning, "Message", "DDA or BresenHam?\n");
+    QMessageBox box(QMessageBox::Warning, "LineSegmentAlgorithm", "DDA or BresenHam?\n");
     box.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
     box.setButtonText(QMessageBox::Yes, QString("DDA"));
     box.setButtonText(QMessageBox::No, QString("BresenHam"));
@@ -67,7 +67,7 @@ void MainWindow::on_RandomLineButton_clicked(){
 void MainWindow::on_PolygonButton_clicked(){
     paint2DWidget->setMode(POLYGON);
 //    ui->ModeLabel->setText("Polygon");
-    QMessageBox box(QMessageBox::Warning, "Message", "DDA or BresenHam?\n");
+    QMessageBox box(QMessageBox::Warning, "PolygonAlgorithm", "DDA or BresenHam?\n");
     box.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
     box.setButtonText(QMessageBox::Yes, QString("DDA"));
     box.setButtonText(QMessageBox::No, QString("BresenHam"));
@@ -104,6 +104,8 @@ void MainWindow::on_PaintModeCheckBox_clicked(){
         ui->LineSegmentButton->setDisabled(true);
         ui->CircleButton->setDisabled(true);
         ui->EllipseButton->setDisabled(true);
+        ui->RandomLineButton->setDisabled(true);
+        ui->PolygonButton->setDisabled(true);
         paint2DWidget->setMode(NONE);
         paint2DWidget->setColor(DEFAULT_COLOR);
     }else{
@@ -113,6 +115,8 @@ void MainWindow::on_PaintModeCheckBox_clicked(){
         ui->LineSegmentButton->setEnabled(true);
         ui->CircleButton->setEnabled(true);
         ui->EllipseButton->setEnabled(true);
+        ui->RandomLineButton->setEnabled(true);
+        ui->PolygonButton->setEnabled(true);
     }
 }
 
@@ -159,7 +163,7 @@ bool MainWindow::saveFile(){
 
 void MainWindow::closeEvent(QCloseEvent* event){
     if (paint2DWidget->getIsModified()){
-        int temp = QMessageBox::information(this, "Message", "文件未保存，是否保存？", QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
+        int temp = QMessageBox::information(this, "File Not Saved", "文件未保存，是否保存？", QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
         if (temp == QMessageBox::Yes){              //保存
             if(saveFile()){
                 event->accept();
