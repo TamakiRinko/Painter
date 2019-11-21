@@ -12,6 +12,7 @@ public:
     void setEndPoint(QPoint endPoint);
     void drawLogic();
     bool isNotGraphics();
+    void translation(int xOffset, int yOffset);             //图元平移
 private:
     QPoint startPoint;
     QPoint endPoint;

@@ -1,9 +1,11 @@
 #include "randomline.h"
 
 RandomLine::RandomLine(): Graphics(DEFAULT_COLOR, DEFAULT_WIDTH){
+    mode = RANDOMLINE;
 }
 
 RandomLine::RandomLine(QPoint startPoint, QColor color, int width): Graphics(color, width){
+    mode = RANDOMLINE;
     QPoint* p = new QPoint(startPoint);
     points.append(p);
     this->curPoint = startPoint;
@@ -25,4 +27,13 @@ void RandomLine::drawLogic(){
 
 bool RandomLine::isNotGraphics(){
     return points.size() < 1;
+}
+
+void RandomLine::translation(int xOffset, int yOffset){
+    curPoint.setX(curPoint.x() + xOffset);
+    curPoint.setY(curPoint.y() + yOffset);
+    for(int i = 0; i < points.size(); ++i){
+        points[i]->setX(points[i]->x() + xOffset);
+        points[i]->setY(points[i]->y() + yOffset);
+    }
 }

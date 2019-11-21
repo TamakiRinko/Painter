@@ -29,9 +29,16 @@ private:
     QOpenGLWidget* paint3DWidget;
 
     QMenu* fileMenu;                    //文件菜单
+    QMenu* transformMenu;
     QAction* newWindowAction;           //新建窗口
     QAction* saveFileAction;            //保存文件
+    QAction* copyAction;                //复制
+    QAction* pasteAction;               //粘贴
+    QAction* translationAction;         //平移
+
+
     QString fileName;                   //保存的文件名
+
 
 
 
@@ -44,6 +51,11 @@ protected:
     void resizeEvent(QResizeEvent *event);
 
 private slots:
+
+    //Action
+    void newWindow();
+    bool saveFile();
+
     void on_LineSegmentButton_clicked();
     void on_CircleButton_clicked();
     void on_EllipseButton_clicked();
@@ -55,11 +67,12 @@ private slots:
     void on_WidthSpinBox_valueChanged(int arg1);
     void on_WSpinBox_valueChanged(int arg1);
     void on_HSpinBox_valueChanged(int arg1);
-
-    //Action
-    void newWindow();
-    bool saveFile();
     void on_RandomLineButton_clicked();
+    void on_actionTranslation_triggered();
+    void on_SelectButton_clicked();
+
+    void graphicsCopy_triggered();
+    void graphicsPaste_triggered();
 };
 
 #endif // MAINWINDOW_H

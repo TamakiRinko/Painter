@@ -2,11 +2,13 @@
 
 Circle::Circle(): Graphics(DEFAULT_COLOR, DEFAULT_WIDTH){
     radius = 0;
+    mode = CIRCLE;
 }
 
 Circle::Circle(QPoint center, QColor color, int width): Graphics(color, width){
     this->center = center;
     radius = 0;
+    mode = CIRCLE;
 }
 
 void Circle::setPoint(QPoint point){
@@ -22,6 +24,17 @@ bool Circle::isNotGraphics(){
 void Circle::drawLogic(){
     points.clear();
     mid();
+}
+
+void Circle::translation(int xOffset, int yOffset){
+    for(int i = 0; i < points.size(); ++i){
+        points[i]->setX(points[i]->x() + xOffset);
+        points[i]->setY(points[i]->y() + yOffset);
+    }
+    center.setX(center.x()+ xOffset);
+    center.setY(center.y()+ yOffset);
+    outPoint.setX(outPoint.x() + xOffset);
+    outPoint.setY(outPoint.y() + yOffset);
 }
 
 void Circle::mid(){

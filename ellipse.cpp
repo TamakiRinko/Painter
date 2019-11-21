@@ -2,11 +2,13 @@
 
 Ellipse::Ellipse(): Graphics(DEFAULT_COLOR, DEFAULT_WIDTH){
     rx = ry = 0;
+    mode = ELLIPSE;
 }
 
 Ellipse::Ellipse(QPoint center, QColor color, int width): Graphics(color, width){
     this->center = center;
     rx = ry = 0;
+    mode = ELLIPSE;
 }
 
 void Ellipse::setPoint(QPoint point){
@@ -22,6 +24,17 @@ bool Ellipse::isNotGraphics(){
 void Ellipse::drawLogic(){
     points.clear();
     mid();
+}
+
+void Ellipse::translation(int xOffset, int yOffset){
+    for(int i = 0; i < points.size(); ++i){
+        points[i]->setX(points[i]->x() + xOffset);
+        points[i]->setY(points[i]->y() + yOffset);
+    }
+    center.setX(center.x()+ xOffset);
+    center.setY(center.y()+ yOffset);
+    outPoint.setX(outPoint.x() + xOffset);
+    outPoint.setY(outPoint.y() + yOffset);
 }
 
 void Ellipse::mid(){

@@ -21,24 +21,89 @@ MainWindow::MainWindow(QWidget *parent) :
 }
 
 void MainWindow::setAction(){
-    fileMenu = ui->menuBar->addMenu("文件");
+    fileMenu = ui->menuBar->addMenu("File");
 
     //新建窗口
-    newWindowAction = new QAction("新建");
+    newWindowAction = new QAction("New");
     newWindowAction->setShortcut(QKeySequence::New);
     connect(newWindowAction, SIGNAL(triggered(bool)), this, SLOT(newWindow()));
-
     //保存文件
-    saveFileAction = new QAction("保存");
+    saveFileAction = new QAction("Save");
     saveFileAction->setShortcut(QKeySequence::Save);
     connect(saveFileAction, SIGNAL(triggered(bool)), this, SLOT(saveFile()));
+    //复制
+    copyAction = new QAction("Copy");
+    copyAction->setShortcut(QKeySequence::Copy);
+    connect(copyAction, SIGNAL(triggered(bool)), this, SLOT(graphicsCopy_triggered()));
+    //粘贴
+    pasteAction = new QAction("Paste");
+    pasteAction->setShortcut(QKeySequence::Paste);
+    connect(pasteAction, SIGNAL(triggered(bool)), this, SLOT(graphicsPaste_triggered()));
 
     fileMenu->addAction(newWindowAction);
     fileMenu->addAction(saveFileAction);
+    fileMenu->addAction(copyAction);
+    fileMenu->addAction(pasteAction);
+
+    //平移
+    transformMenu = ui->menuBar->addMenu("Transform");
+    translationAction = new QAction("Translation");
+    connect(translationAction, SIGNAL(triggered(bool)), this, SLOT(on_actionTranslation_triggered()));
+    transformMenu->addAction(translationAction);
 }
 
 MainWindow::~MainWindow(){
     delete ui;
+}
+
+/**
+ * @brief MainWindow::newOneFile
+ * 新建一个窗口
+ */
+void MainWindow::newWindow(){
+    MainWindow* newWindow = new MainWindow;
+    newWindow->show();
+}
+
+bool MainWindow::saveFile(){
+    if(fileName == nullptr){
+        fileName = QFileDialog::getSaveFileName(this, tr("Save File"), "newPic", tr("Image (*.bmp)"));
+    }
+    if(fileName == "")  return false;
+    fileName = fileName.toUtf8();
+    paint2DWidget->saveTo(fileName);
+    return true;
+}
+
+void MainWindow::closeEvent(QCloseEvent* event){
+    if (paint2DWidget->getIsModified()){
+        int temp = QMessageBox::information(this, "File Not Saved", "文件未保存，是否保存？", QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
+        if (temp == QMessageBox::Yes){              //保存
+            if(saveFile()){
+                event->accept();
+            }else{
+                event->ignore();
+            }
+        }
+        else if(temp == QMessageBox::No){           //不保存
+            event->accept();
+        }else{                                      //取消关闭
+            event->ignore();
+        }
+    }
+    else{
+        event->accept();
+    }
+}
+
+/**
+ * @brief MainWindow::resizeEvent
+ * @param event
+ * 检测窗口改变，调整大小
+ */
+void MainWindow::resizeEvent(QResizeEvent*){
+    ui->HSpinBox->setValue(this->height());
+    ui->WSpinBox->setValue(this->width());
 }
 
 void MainWindow::on_LineSegmentButton_clicked(){
@@ -142,52 +207,23 @@ void MainWindow::on_HSpinBox_valueChanged(int arg1){
     resize(this->width(), arg1);
 }
 
-/**
- * @brief MainWindow::newOneFile
- * 新建一个窗口
- */
-void MainWindow::newWindow(){
-    MainWindow* newWindow = new MainWindow;
-    newWindow->show();
+void MainWindow::on_actionTranslation_triggered(){
+    ui->ModeLabel->setText("Translation");
+    paint2DWidget->setMode(TRANSLATION);
 }
 
-bool MainWindow::saveFile(){
-    if(fileName == nullptr){
-        fileName = QFileDialog::getSaveFileName(this, tr("Save File"), "newPic", tr("Image (*.bmp)"));
-    }
-    if(fileName == "")  return false;
-    fileName = fileName.toUtf8();
-    paint2DWidget->saveTo(fileName);
-    return true;
+void MainWindow::on_SelectButton_clicked(){
+    ui->ModeLabel->setText("Select");
+    paint2DWidget->setMode(SELECT);
 }
 
-void MainWindow::closeEvent(QCloseEvent* event){
-    if (paint2DWidget->getIsModified()){
-        int temp = QMessageBox::information(this, "File Not Saved", "文件未保存，是否保存？", QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
-        if (temp == QMessageBox::Yes){              //保存
-            if(saveFile()){
-                event->accept();
-            }else{
-                event->ignore();
-            }
-        }
-        else if(temp == QMessageBox::No){           //不保存
-            event->accept();
-        }else{                                      //取消关闭
-            event->ignore();
-        }
-    }
-    else{
-        event->accept();
-    }
+void MainWindow::graphicsCopy_triggered(){
+    ui->ModeLabel->setText("Copy");
+    paint2DWidget->graphicsCopy();
 }
 
-/**
- * @brief MainWindow::resizeEvent
- * @param event
- * 检测窗口改变，调整大小
- */
-void MainWindow::resizeEvent(QResizeEvent*){
-    ui->HSpinBox->setValue(this->height());
-    ui->WSpinBox->setValue(this->width());
+void MainWindow::graphicsPaste_triggered(){
+    ui->ModeLabel->setText("Paste");
+    paint2DWidget->graphicsPaste();
+    ui->ModeLabel->setText("Translation");
 }

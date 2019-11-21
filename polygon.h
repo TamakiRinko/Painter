@@ -8,12 +8,14 @@ class Polygon: public Graphics{
 public:
     Polygon();
     Polygon(QPoint startPoint, QColor color = DEFAULT_COLOR, int width = DEFAULT_WIDTH, LineAlgorithm alg = LineAlgorithm::DDA);
+    Polygon(const Polygon& p);
+    virtual ~Polygon();
     void setNextPoint(QPoint nextPoint);
     void complete();
     void withDraw();
-    virtual ~Polygon(){}
     void drawLogic();
     bool isNotGraphics();
+    void translation(int xOffset, int yOffset);             //图元平移
 private:
     QPoint* startPoint;
     QVector<QPoint*> vertexList;                    //多边形顶点集

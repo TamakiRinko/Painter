@@ -1,10 +1,11 @@
 #include "linesegment.h"
 
 LineSegment::LineSegment(): Graphics(DEFAULT_COLOR, DEFAULT_WIDTH){
-
+    mode = LINESEGMENT;
 }
 
 LineSegment::LineSegment(QPoint startPoint, QColor color, int width, LineAlgorithm alg): Graphics(color, width){
+    mode = LINESEGMENT;
     this->startPoint = startPoint;
     this->alg = alg;
 }
@@ -18,6 +19,7 @@ LineSegment::LineSegment(QPoint startPoint, QColor color, int width, LineAlgorit
  * 两个点已经给出，点集直接计算
  */
 LineSegment::LineSegment(QPoint startPoint, QPoint endPoint, QColor color, int width, LineAlgorithm alg): Graphics(color, width){
+    mode = LINESEGMENT;
     this->startPoint = startPoint;
     this->endPoint = endPoint;
     this->alg = alg;
@@ -41,6 +43,17 @@ void LineSegment::drawLogic(){
 
 bool LineSegment::isNotGraphics(){
     return (startPoint == endPoint);
+}
+
+void LineSegment::translation(int xOffset, int yOffset){
+    for(int i = 0; i < points.size(); ++i){
+        points[i]->setX(points[i]->x() + xOffset);
+        points[i]->setY(points[i]->y() + yOffset);
+    }
+    startPoint.setX(startPoint.x()+ xOffset);
+    startPoint.setY(startPoint.y()+ yOffset);
+    endPoint.setX(endPoint.x() + xOffset);
+    endPoint.setY(endPoint.y() + yOffset);
 }
 
 void LineSegment::bresenHam(){

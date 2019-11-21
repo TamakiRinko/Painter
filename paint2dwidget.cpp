@@ -9,8 +9,7 @@ Paint2DWidget::Paint2DWidget(QWidget *parent) :
     eraser = &Eraser::getInstance();
     isModified = false;
     curAlg = BRESENHAM;
-//    image = new QImage(this->size(), QImage::Format_ARGB32);
-//    image->load(tr("D:/Myfolder/Desktop/11.bmp"));
+    hasSelected = false;
 }
 
 Paint2DWidget::~Paint2DWidget(){
@@ -19,6 +18,12 @@ Paint2DWidget::~Paint2DWidget(){
 
 void Paint2DWidget::setMode(Mode mode){
     this->curMode = mode;
+    if(curMode != TRANSLATION && curMode != SELECT){
+        for(int i = 0; i < transformGraphicsList.size(); ++i){
+            transformGraphicsList[i]->resetColor();
+        }
+        update();
+    }
 }
 
 void Paint2DWidget::setColor(QColor color){
@@ -70,9 +75,9 @@ void Paint2DWidget::eraseGraphics(){
 
     int offset = 0;
     for(int i: listTmp){
-//        qDebug() << "删除的图形下标:" << i;
+        qDebug() << "删除的图形下标:" << i;
+        delete graphicsList[i - offset];                            //释放空间
         graphicsList.erase(graphicsList.begin() + i - offset);      //移除该图形，已经调用析构函数
-//        delete graphicsList[i - offset];                            //释放空间
         offset++;
     }
 }
@@ -102,12 +107,89 @@ void Paint2DWidget::withDraw(){
         curPolygon->withDraw();
     }else{
         if(!graphicsList.isEmpty()){
+            delete graphicsList[graphicsList.size() - 1];
             graphicsList.pop_back();
         }
     }
     update();
 }
 
+void Paint2DWidget::translation(QPoint start, QPoint end){
+    int xOffset = end.x() - start.x();
+    int yOffset = end.y() - start.y();
+//    qDebug() << "xOff: " << xOffset << ", yOff: " << yOffset << endl;
+    for(int i = 0; i < transformGraphicsList.size(); ++i){
+        transformGraphicsList[i]->translation(xOffset, yOffset);
+    }
+}
+
+void Paint2DWidget::clearList(QVector<Graphics* >* list){
+    for(int i = 0; i < list->size(); ++i){
+        (*list)[i]->resetColor();
+    }
+    list->clear();
+}
+
+void Paint2DWidget::setListColor(QVector<Graphics* >* list){
+    for(int i = 0; i < list->size(); ++i){
+        if((*list)[i]->getColor() == Qt::red){
+            (*list)[i]->setColor(Qt::blue);
+        }else{
+            (*list)[i]->setColor(Qt::red);
+        }
+    }
+}
+
+void Paint2DWidget::graphicsCopy(){
+    if(transformGraphicsList.size() != 0 && curMode == SELECT && hasSelected){
+        copyGraphicsList.clear();
+        for(int i = 0; i < transformGraphicsList.size(); ++i){
+            Graphics* copy;
+            switch (transformGraphicsList[i]->getMode()) {
+                case LINESEGMENT:{
+                    copy = new LineSegment(*(LineSegment*)transformGraphicsList[i]);
+                    break;
+                }
+                case RANDOMLINE:{
+                    copy = new RandomLine(*(RandomLine*)transformGraphicsList[i]);
+                    break;
+                }
+                case CIRCLE:{
+                    copy = new Circle(*(Circle*)transformGraphicsList[i]);
+                    break;
+                }
+                case ELLIPSE:{
+                    copy = new Ellipse(*(Ellipse*)transformGraphicsList[i]);
+                    break;
+                }
+                case POLYGON:{
+                    copy = new Polygon(*(Polygon*)transformGraphicsList[i]);
+                    break;
+                }
+                default: copy = nullptr; break;
+            }
+            if(copy != nullptr){
+                copyGraphicsList.push_back(copy);
+            }
+        }
+    }
+}
+
+void Paint2DWidget::graphicsPaste(){
+    if(copyGraphicsList.size() != 0 && curMode == SELECT){
+        clearList(&transformGraphicsList);
+//        setListColor(&copyGraphicsList);
+        transformGraphicsList = copyGraphicsList;
+        QPoint p(0, 0);
+        QPoint q(10, 10);
+        translation(p, q);          //平移三格，用以区分
+        for(int i = 0; i < copyGraphicsList.size(); ++i){
+            graphicsList.push_back(copyGraphicsList[i]);
+        }
+        curMode = TRANSLATION;
+        update();
+    }
+}
 
 void Paint2DWidget::paintEvent(QPaintEvent*){
     QPainter painter(this);
@@ -145,6 +227,11 @@ void Paint2DWidget::mousePressEvent(QMouseEvent* e){
         case ERASER:{
             QPoint* p = new QPoint(point.x(), point.y());                 //当前为橡皮擦
             eraser->append(p);
+            break;
+        }
+        case TRANSLATION:{                                                //当前需要平移
+            pressPoint = point;
+            this->setCursor(Qt::OpenHandCursor);
             break;
         }
         default: break;
@@ -227,6 +314,27 @@ void Paint2DWidget::mouseReleaseEvent(QMouseEvent* e){
             curGraphics = nullptr;
             break;
         }
+        case SELECT:{                       //选择一个点，只考虑释放
+            //还原之前选中的图元
+            clearList(&transformGraphicsList);
+            clearList(&copyGraphicsList);
+            //获得选中的图元
+            hasSelected = false;
+            for(int i = 0; i < graphicsList.size(); ++i){
+                if(graphicsList[i]->pointIsIn(point)){
+                    hasSelected = true;
+                    transformGraphicsList.push_back(graphicsList[i]);
+                    setListColor(&transformGraphicsList);
+                }
+            }
+            break;
+        }
+        case TRANSLATION:{
+            translation(pressPoint, point);
+            pressPoint = point;
+            this->setCursor(Qt::ArrowCursor);
+            break;
+        }
         default: break;
     }
     isModified = true;
@@ -272,6 +380,12 @@ void Paint2DWidget::mouseMoveEvent(QMouseEvent* e){
         case ERASER:{
             QPoint* p = new QPoint(point.x(), point.y());
             eraser->append(p);
+            break;
+        }
+        case TRANSLATION:{
+            translation(pressPoint, point);
+            pressPoint = point;
+            update();
             break;
         }
         default: break;

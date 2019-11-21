@@ -1,10 +1,12 @@
 #include "eraser.h"
 
 Eraser::Eraser(){
-
 }
 
 Eraser::~Eraser(){
+    for(int i = 0; i < points.size(); ++i){
+        delete points[i];
+    }
     points.clear();
 }
 

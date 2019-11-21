@@ -11,6 +11,7 @@ public:
     void setPoint(QPoint point);
     void drawLogic();
     bool isNotGraphics();
+    void translation(int xOffset, int yOffset);             //图元平移
 private:
     int rx;
     int ry;

@@ -15,7 +15,7 @@ using namespace std;
 class Graphics;
 
 enum Mode{
-    NONE, LINESEGMENT, RANDOMLINE, POLYGON, CIRCLE, ELLIPSE, ERASER
+    NONE, LINESEGMENT, RANDOMLINE, POLYGON, CIRCLE, ELLIPSE, ERASER, TRANSLATION, SELECT
 };
 
 enum LineAlgorithm{
@@ -29,29 +29,36 @@ const LineAlgorithm DEFAULT_ALG = LineAlgorithm::BRESENHAM;
 class Graphics{
 public:
     Graphics(): isErased(false){}
+    Graphics(QColor c, int w);
+    Graphics(const Graphics& g);
     virtual ~Graphics();
-    Graphics(QColor c, int w): color(c), width(w), isErased(false){}
-//    QVector<QPoint* >& getPoints();                        //不要有类似的函数，可以直接获得最重要的points
+
     const QVector<QPoint* >& getPoints() const;                   //退而求其次，不可修改，只可拿到
     void append(QPoint* point);
     void clear();
-    int getNum();
+    bool pointIsIn(QPoint point);                           //point是否在图形中
+
     void setIsErased(bool b);
     bool getIsErased();
-    QVector<QPoint* >::iterator getBeginIterator();
-    QVector<QPoint* >::iterator getEndIterator();
     QColor& getColor();
+    void setColor(QColor c);
+    void resetColor();
+    int getNum();
     int getWidth();
+    Mode getMode();
 
     QPoint& operator[](int i);
 
     virtual void drawLogic() = 0;
     virtual bool isNotGraphics() = 0;
+    virtual void translation(int xOffset, int yOffset) = 0; //图元平移
 protected:
     QVector<QPoint* > points;
     QColor color;
+    QColor oldColor;                                        //之前的颜色
     int width;                                              //像素
     bool isErased;                                          //是否已经被删除
+    Mode mode;                                              //自己的类型
 };
 
 

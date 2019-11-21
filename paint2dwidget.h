@@ -14,6 +14,7 @@
 #include <QBrush>
 #include <QMouseEvent>
 #include <QDebug>
+#include <QAction>
 
 
 class Paint2DWidget : public QWidget{
@@ -25,10 +26,15 @@ public:
     void setColor(QColor color);
     void setWidth(int width);
     void setLineAlgorithm(LineAlgorithm alg);
-    void saveTo(QString fileName, const char* format = "bmp");            //保存为指定格式
     bool getIsModified();
-    void withDraw();                            //撤回
+
     ~Paint2DWidget();
+
+    void withDraw();                            //撤回
+    void saveTo(QString fileName, const char* format = "bmp");            //保存为指定格式
+    void graphicsCopy();
+    void graphicsPaste();
+
 private:
     Mode curMode;                               //当前的模式
     QColor curColor;                            //当前选择的颜色
@@ -39,16 +45,26 @@ private:
     Eraser* eraser;                             //橡皮擦
     bool isModified;                            //画板是否已经被修改
 
+    QPoint pressPoint;                          //鼠标按下时的坐标
+    QVector<int> transformIndexList;            //需要进行转换的图元的下标列表
+    QVector<Graphics* > transformGraphicsList;  //需要进行转换的图元列表
+    QVector<Graphics* > copyGraphicsList;       //复制的图元列表
+    bool hasSelected;                           //已经选中
+
 //    QImage* image;
 
     void drawGraphics(QPainter& painter, Graphics* graphics);
-    void eraseGraphics();                       //擦除橡皮擦覆盖到的图形
+    void eraseGraphics();                           //擦除橡皮擦覆盖到的图形
+    void translation(QPoint start, QPoint end);     //平移
+    void clearList(QVector<Graphics* >* list);      //清理
+    void setListColor(QVector<Graphics* >* list);   //上色
 
 protected:
     void paintEvent(QPaintEvent* e);
     void mousePressEvent(QMouseEvent* e);
     void mouseReleaseEvent(QMouseEvent* e);
     void mouseMoveEvent(QMouseEvent* e);
+
 };
 
 

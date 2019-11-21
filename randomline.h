@@ -12,6 +12,7 @@ public:
     void setPoint(QPoint nextPoint);
     void drawLogic();
     bool isNotGraphics();
+    void translation(int xOffset, int yOffset);             //图元平移
 private:
     QPoint curPoint;
     LineSegment* line;                      //两点之间画线
