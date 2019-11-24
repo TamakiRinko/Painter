@@ -5,10 +5,11 @@ Paint2DWidget::Paint2DWidget(QWidget *parent) :
     curMode = NONE;
     curColor = DEFAULT_COLOR;
     curWidth = DEFAULT_WIDTH;
+    curAlg = BRESENHAM;
     curGraphics = nullptr;
+    rotatePoint = nullptr;
     eraser = &Eraser::getInstance();
     isModified = false;
-    curAlg = BRESENHAM;
     hasSelected = false;
 }
 
@@ -18,11 +19,13 @@ Paint2DWidget::~Paint2DWidget(){
 
 void Paint2DWidget::setMode(Mode mode){
     this->curMode = mode;
-    if(curMode != TRANSLATION && curMode != SELECT){
-        for(int i = 0; i < transformGraphicsList.size(); ++i){
-            transformGraphicsList[i]->resetColor();
-        }
+    if(curMode != TRANSLATION && curMode != ROTATION && curMode != SELECT){
+        clearList(&transformGraphicsList);
         update();
+    }
+    if(curMode != ROTATION && rotatePoint != nullptr){
+        delete rotatePoint;
+        rotatePoint = nullptr;
     }
 }
 
@@ -51,6 +54,17 @@ void Paint2DWidget::drawGraphics(QPainter& painter, Graphics* graphics){
     for(int i = 0; i < graphics->getNum(); ++i){
         painter.drawPoint((*graphics)[i]);
     }
+}
+
+void Paint2DWidget::drawPoint(QPainter& painter, QPoint* point){
+    QPen pen;
+    if(point == nullptr){
+        return;
+    }
+    pen.setColor(Qt::red);
+    pen.setWidth(5);
+    painter.setPen(pen);
+    painter.drawPoint(*point);
 }
 
 void Paint2DWidget::eraseGraphics(){
@@ -198,6 +212,7 @@ void Paint2DWidget::paintEvent(QPaintEvent*){
     for(int i = 0; i < graphicsList.size(); ++i){
         drawGraphics(painter, graphicsList[i]);
     }
+    drawPoint(painter, rotatePoint);
 }
 
 /**
@@ -335,6 +350,15 @@ void Paint2DWidget::mouseReleaseEvent(QMouseEvent* e){
             this->setCursor(Qt::ArrowCursor);
             break;
         }
+        case ROTATION:{
+            if(rotatePoint != nullptr){
+                delete rotatePoint;
+                rotatePoint = nullptr;
+            }
+            rotatePoint = new QPoint(point.x(), point.y());
+            update();
+            break;
+        }
         default: break;
     }
     isModified = true;
@@ -391,4 +415,22 @@ void Paint2DWidget::mouseMoveEvent(QMouseEvent* e){
         default: break;
     }
     isModified = true;
+}
+
+void Paint2DWidget::wheelEvent(QWheelEvent* e){
+    int delta = e->delta();
+
+//    qDebug() << delta << endl;
+
+    switch(curMode){
+        case ROTATION:{
+            if(hasSelected && rotatePoint != nullptr){
+                for(int i = 0; i < transformGraphicsList.size(); ++i){
+                    transformGraphicsList[i]->rotation(rotatePoint, delta / 120);
+                }
+                update();
+            }
+        }
+    }
+
 }

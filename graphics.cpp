@@ -90,3 +90,15 @@ bool Graphics::pointIsIn(QPoint point){
     }
     return false;
 }
+
+void Graphics::pointRotation(QPoint* movePoint, const QPoint* basePoint, int degree){
+    double de = degree * PI / 180;
+
+    int moveX = movePoint->x() - basePoint->x();
+    int moveY = movePoint->y() - basePoint->y();
+    int mX = round(moveX * cos(de) - moveY * sin(de));                //四舍五入！
+    int mY = round(moveX * sin(de) + moveY * cos(de));
+
+    movePoint->setX(mX + basePoint->x());
+    movePoint->setY(mY + basePoint->y());
+}

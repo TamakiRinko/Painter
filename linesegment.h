@@ -12,7 +12,8 @@ public:
     void setEndPoint(QPoint endPoint);
     void drawLogic();
     bool isNotGraphics();
-    void translation(int xOffset, int yOffset);             //图元平移
+    void translation(int xOffset, int yOffset);
+    void rotation(const QPoint* point, int degree);
 private:
     QPoint startPoint;
     QPoint endPoint;

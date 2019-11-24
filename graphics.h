@@ -9,13 +9,14 @@
 #include <QSet>
 #include <QList>
 #include <math.h>
+#include <QDebug>
 using namespace std;
 
 
 class Graphics;
 
 enum Mode{
-    NONE, LINESEGMENT, RANDOMLINE, POLYGON, CIRCLE, ELLIPSE, ERASER, TRANSLATION, SELECT
+    NONE, LINESEGMENT, RANDOMLINE, POLYGON, CIRCLE, ELLIPSE, ERASER, TRANSLATION, SELECT, ROTATION
 };
 
 enum LineAlgorithm{
@@ -25,6 +26,7 @@ enum LineAlgorithm{
 const QColor DEFAULT_COLOR = Qt::black;
 const int DEFAULT_WIDTH = 1;
 const LineAlgorithm DEFAULT_ALG = LineAlgorithm::BRESENHAM;
+const double PI = 3.1415;
 
 class Graphics{
 public:
@@ -33,10 +35,11 @@ public:
     Graphics(const Graphics& g);
     virtual ~Graphics();
 
-    const QVector<QPoint* >& getPoints() const;                   //退而求其次，不可修改，只可拿到
+    const QVector<QPoint* >& getPoints() const;                     //退而求其次，不可修改，只可拿到
     void append(QPoint* point);
     void clear();
-    bool pointIsIn(QPoint point);                           //point是否在图形中
+    bool pointIsIn(QPoint point);                                   //point是否在图形中
+    void pointRotation(QPoint* movePoint, const QPoint* basePoint, int degree);            //点的旋转
 
     void setIsErased(bool b);
     bool getIsErased();
@@ -52,6 +55,7 @@ public:
     virtual void drawLogic() = 0;
     virtual bool isNotGraphics() = 0;
     virtual void translation(int xOffset, int yOffset) = 0; //图元平移
+    virtual void rotation(const QPoint* point, int degree) = 0; //图元旋转
 protected:
     QVector<QPoint* > points;
     QColor color;

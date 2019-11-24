@@ -51,9 +51,12 @@ private:
     QVector<Graphics* > copyGraphicsList;       //复制的图元列表
     bool hasSelected;                           //已经选中
 
+    QPoint* rotatePoint;                        //旋转中心点
+
 //    QImage* image;
 
     void drawGraphics(QPainter& painter, Graphics* graphics);
+    void drawPoint(QPainter& painter, QPoint* point);//画出一个点
     void eraseGraphics();                           //擦除橡皮擦覆盖到的图形
     void translation(QPoint start, QPoint end);     //平移
     void clearList(QVector<Graphics* >* list);      //清理
@@ -64,7 +67,7 @@ protected:
     void mousePressEvent(QMouseEvent* e);
     void mouseReleaseEvent(QMouseEvent* e);
     void mouseMoveEvent(QMouseEvent* e);
-
+    void wheelEvent(QWheelEvent* e);
 };
 
 

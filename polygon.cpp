@@ -109,8 +109,16 @@ void Polygon::translation(int xOffset, int yOffset){
     for(int i = 0; i < lineList.size(); ++i){
         lineList[i]->translation(xOffset, yOffset);
     }
-    for(int i = 0; i < points.size(); ++i){
-        points[i]->setX(points[i]->x() + xOffset);
-        points[i]->setY(points[i]->y() + yOffset);
+}
+
+void Polygon::rotation(const QPoint* point, int degree){
+    //顶点移动
+    for(int i = 0; i < vertexList.size(); ++i){
+        pointRotation(vertexList[i], point, degree);
     }
+    //边移动
+    for(int i = 0; i < lineList.size(); ++i){
+        lineList[i]->rotation(point, degree);
+    }
+    drawLogic();
 }

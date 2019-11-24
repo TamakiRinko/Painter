@@ -15,7 +15,8 @@ public:
     void withDraw();
     void drawLogic();
     bool isNotGraphics();
-    void translation(int xOffset, int yOffset);             //图元平移
+    void translation(int xOffset, int yOffset);
+    void rotation(const QPoint* point, int degree);
 private:
     QPoint* startPoint;
     QVector<QPoint*> vertexList;                    //多边形顶点集

@@ -37,3 +37,7 @@ void RandomLine::translation(int xOffset, int yOffset){
         points[i]->setY(points[i]->y() + yOffset);
     }
 }
+
+void RandomLine::rotation(const QPoint* point, int degree){
+
+}

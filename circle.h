@@ -12,7 +12,8 @@ public:
     void setPoint(QPoint point);
     void drawLogic();
     bool isNotGraphics();
-    void translation(int xOffset, int yOffset);             //图元平移
+    void translation(int xOffset, int yOffset);
+    void rotation(const QPoint* point, int degree);
 private:
     QPoint center;
     QPoint outPoint;                    //圆周上的一点

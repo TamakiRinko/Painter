@@ -56,6 +56,12 @@ void LineSegment::translation(int xOffset, int yOffset){
     endPoint.setY(endPoint.y() + yOffset);
 }
 
+void LineSegment::rotation(const QPoint* point, int degree){
+    pointRotation(&startPoint, point, degree);
+    pointRotation(&endPoint, point, degree);
+    drawLogic();
+}
+
 void LineSegment::bresenHam(){
     points.append(&startPoint);
 

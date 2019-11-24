@@ -29,12 +29,13 @@ private:
     QOpenGLWidget* paint3DWidget;
 
     QMenu* fileMenu;                    //文件菜单
-    QMenu* transformMenu;
+    QMenu* transformMenu;               //操作菜单
     QAction* newWindowAction;           //新建窗口
     QAction* saveFileAction;            //保存文件
     QAction* copyAction;                //复制
     QAction* pasteAction;               //粘贴
     QAction* translationAction;         //平移
+    QAction* rotateAction;              //旋转
 
 
     QString fileName;                   //保存的文件名
@@ -69,6 +70,7 @@ private slots:
     void on_HSpinBox_valueChanged(int arg1);
     void on_RandomLineButton_clicked();
     void on_actionTranslation_triggered();
+    void on_actionRotation_triggered();
     void on_SelectButton_clicked();
 
     void graphicsCopy_triggered();

@@ -45,11 +45,18 @@ void MainWindow::setAction(){
     fileMenu->addAction(copyAction);
     fileMenu->addAction(pasteAction);
 
-    //平移
+
     transformMenu = ui->menuBar->addMenu("Transform");
+
+    //平移
     translationAction = new QAction("Translation");
     connect(translationAction, SIGNAL(triggered(bool)), this, SLOT(on_actionTranslation_triggered()));
+    //旋转
+    rotateAction = new QAction("Rotation");
+    connect(rotateAction, SIGNAL(triggered(bool)), this, SLOT(on_actionRotation_triggered()));
+
     transformMenu->addAction(translationAction);
+    transformMenu->addAction(rotateAction);
 }
 
 MainWindow::~MainWindow(){
@@ -210,6 +217,11 @@ void MainWindow::on_HSpinBox_valueChanged(int arg1){
 void MainWindow::on_actionTranslation_triggered(){
     ui->ModeLabel->setText("Translation");
     paint2DWidget->setMode(TRANSLATION);
+}
+
+void MainWindow::on_actionRotation_triggered(){
+    ui->ModeLabel->setText("Rotation");
+    paint2DWidget->setMode(ROTATION);
 }
 
 void MainWindow::on_SelectButton_clicked(){

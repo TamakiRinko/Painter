@@ -37,6 +37,12 @@ void Circle::translation(int xOffset, int yOffset){
     outPoint.setY(outPoint.y() + yOffset);
 }
 
+void Circle::rotation(const QPoint* point, int degree){
+    pointRotation(&center, point, degree);
+    pointRotation(&outPoint, point, degree);
+    drawLogic();
+}
+
 void Circle::mid(){
     int di = 3 - 2 * radius;
     int xi = 0;

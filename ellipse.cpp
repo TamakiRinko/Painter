@@ -37,6 +37,13 @@ void Ellipse::translation(int xOffset, int yOffset){
     outPoint.setY(outPoint.y() + yOffset);
 }
 
+void Ellipse::rotation(const QPoint* point, int degree){
+    pointRotation(&center, point, degree);
+    pointRotation(&outPoint, point, degree);
+
+    drawLogic();
+}
+
 void Ellipse::mid(){
     int rx2 = rx * rx;
     int ry2 = ry * ry;
