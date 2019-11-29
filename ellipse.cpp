@@ -1,11 +1,11 @@
 #include "ellipse.h"
 
-Ellipse::Ellipse(): Graphics(DEFAULT_COLOR, DEFAULT_WIDTH){
+Ellipse::Ellipse(int id): Graphics(id, DEFAULT_COLOR, DEFAULT_WIDTH){
     rx = ry = 0;
     mode = ELLIPSE;
 }
 
-Ellipse::Ellipse(QPoint center, QColor color, int width): Graphics(color, width){
+Ellipse::Ellipse(int id, QPoint center, QColor color, int width): Graphics(id, color, width){
     this->center = center;
     rx = ry = 0;
     mode = ELLIPSE;

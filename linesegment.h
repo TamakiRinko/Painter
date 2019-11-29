@@ -5,9 +5,9 @@
 
 class LineSegment: public Graphics{
 public:
-    LineSegment();
-    LineSegment(QPoint startPoint, QColor color = DEFAULT_COLOR, int width = DEFAULT_WIDTH, LineAlgorithm alg = DEFAULT_ALG);
-    LineSegment(QPoint startPoint, QPoint endPoint, QColor color = DEFAULT_COLOR, int width = DEFAULT_WIDTH, LineAlgorithm alg = DEFAULT_ALG);
+    LineSegment(int id);
+    LineSegment(int id, QPoint startPoint, QColor color = DEFAULT_COLOR, int width = DEFAULT_WIDTH, LineAlgorithm alg = DEFAULT_ALG);
+    LineSegment(int id, QPoint startPoint, QPoint endPoint, QColor color = DEFAULT_COLOR, int width = DEFAULT_WIDTH, LineAlgorithm alg = DEFAULT_ALG);
     LineSegment(const LineSegment& l);
     virtual ~LineSegment(){}
     void setEndPoint(QPoint endPoint);

@@ -5,8 +5,8 @@
 
 class Ellipse: public Graphics{
 public:
-    Ellipse();
-    Ellipse(QPoint center, QColor color = DEFAULT_COLOR, int width = DEFAULT_WIDTH);
+    Ellipse(int id);
+    Ellipse(int id, QPoint center, QColor color = DEFAULT_COLOR, int width = DEFAULT_WIDTH);
     virtual ~Ellipse(){}
     void setPoint(QPoint point);
     void drawLogic();

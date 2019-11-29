@@ -1,7 +1,8 @@
 #include "paint2dwidget.h"
 
-Paint2DWidget::Paint2DWidget(QWidget *parent) :
+Paint2DWidget::Paint2DWidget(const char* fileName, QWidget *parent) :
     QWidget(parent){
+    curId = 0;
     curMode = NONE;
     curColor = DEFAULT_COLOR;
     curWidth = DEFAULT_WIDTH;
@@ -13,6 +14,27 @@ Paint2DWidget::Paint2DWidget(QWidget *parent) :
     eraser = &Eraser::getInstance();
     isModified = false;
     hasSelected = false;
+
+    fout.open("debug.txt", ios::out);
+
+
+    if(fileName != nullptr){
+        unordered_map<string, void (Paint2DWidget::*)()> commandMap;
+        commandMap.insert(pair<string, void (Paint2DWidget::*)()>("resetCanvas", &Paint2DWidget::resetCanvasCommand));
+        commandMap.insert(pair<string, void (Paint2DWidget::*)()>("setColor", &Paint2DWidget::setColorCommand));
+        commandMap.insert(pair<string, void (Paint2DWidget::*)()>("drawLine", &Paint2DWidget::drawLineCommand));
+        commandMap.insert(pair<string, void (Paint2DWidget::*)()>("saveCanvas", &Paint2DWidget::saveCanvasCommand));
+        LineAlgorithmMap.insert(pair<string, LineAlgorithm>("DDA", DDA));
+        LineAlgorithmMap.insert(pair<string, LineAlgorithm>("Bresenham", BRESENHAM));
+
+        fin.open(fileName, ios::in);
+        string order;
+        fin >> order;
+        while(!fin.fail()){
+            (this->*(commandMap[order]))();
+            fin >> order;
+        }
+    }
 }
 
 Paint2DWidget::~Paint2DWidget(){
@@ -257,6 +279,27 @@ void Paint2DWidget::graphicsPaste(){
     }
 }
 
+void Paint2DWidget::reset(){
+    curMode = NONE;
+    curColor = DEFAULT_COLOR;
+    curWidth = DEFAULT_WIDTH;
+    curLineAlg = BRESENHAM;
+    curCropAlg = CS;
+    clearList(&graphicsList);
+    clearList(&transformGraphicsList);
+    clearList(&copyGraphicsList);
+    clearList(&cropList);
+    if(curGraphics != nullptr){
+        delete curGraphics;
+        curGraphics = nullptr;
+    }
+    rotatePoint = nullptr;
+    scalePoint = nullptr;
+    isModified = true;                      //重置也是一种改变
+    hasSelected = false;
+    update();
+}
+
 void Paint2DWidget::paintEvent(QPaintEvent*){
     QPainter painter(this);
 //    painter.drawImage(0, 0, *image);
@@ -278,19 +321,19 @@ void Paint2DWidget::mousePressEvent(QMouseEvent* e){
     QPoint point(e->x(), e->y());
     switch (curMode) {
         case LINESEGMENT:{
-            curGraphics = new LineSegment(point, curColor, curWidth, curLineAlg);     //当前为线段
+            curGraphics = new LineSegment(curId++, point, curColor, curWidth, curLineAlg);     //当前为线段
             break;
         }
         case RANDOMLINE:{
-            curGraphics = new RandomLine(point, curColor, curWidth);      //当前为随机线
+            curGraphics = new RandomLine(curId++, point, curColor, curWidth);      //当前为随机线
             break;
         }
         case CIRCLE:{
-            curGraphics = new Circle(point, curColor, curWidth);          //当前为圆
+            curGraphics = new Circle(curId++, point, curColor, curWidth);          //当前为圆
             break;
         }
         case ELLIPSE:{
-            curGraphics = new Ellipse(point, curColor, curWidth);         //当前为椭圆
+            curGraphics = new Ellipse(curId++, point, curColor, curWidth);         //当前为椭圆
             break;
         }
         case ERASER:{
@@ -346,7 +389,7 @@ void Paint2DWidget::mouseReleaseEvent(QMouseEvent* e){
         }
         case POLYGON:{      //对于多边形，只考虑鼠标释放
             if(curGraphics == nullptr){
-                curGraphics = new Polygon(point, curColor, curWidth, curLineAlg);   //新建多边形
+                curGraphics = new Polygon(curId++, point, curColor, curWidth, curLineAlg);   //新建多边形
             }else{
                 Polygon* curPolygon = (Polygon* )curGraphics;
                 curPolygon->setNextPoint(point);
@@ -565,4 +608,44 @@ void Paint2DWidget::wheelEvent(QWheelEvent* e){
         default: break;
     }
 
+}
+
+void Paint2DWidget::resetCanvasCommand(){
+    struct::resetCanvas r;
+    fin >> r;
+    reset();
+    resize(r.width, r.height);
+    fout << r.width << " " << r.height << endl;
+}
+
+void Paint2DWidget::setColorCommand(){
+    struct::setColor s;
+    fin >> s;
+    QColor q(s.R, s.G, s.B);
+    setColor(q);
+    fout << s.R << " " << s.G << " " << s.B << endl;
+}
+
+void Paint2DWidget::drawLineCommand(){
+    struct::drawLine d;
+    fin >> d;
+    fout << d;
+    QPoint startPoint(d.x1, d.y1);
+    QPoint endPoint(d.x2, d.y2);
+    curGraphics = new LineSegment(d.id, startPoint, curColor, curWidth, LineAlgorithmMap[d.alg]);
+    LineSegment* curLine = (LineSegment* )curGraphics;
+    curLine->setEndPoint(endPoint);
+    if(!curLine->isNotGraphics()){                                      //可能只是一个点
+        curGraphics->drawLogic();
+        graphicsList.append(curGraphics);                               //加入已有图形列表
+    }
+    curGraphics = nullptr;
+    update();
+}
+
+void Paint2DWidget::saveCanvasCommand(){
+    struct::saveCanvas s;
+    fin >> s;
+    QString name((s.fileName + ".bmp").c_str());
+    saveTo(name);
 }

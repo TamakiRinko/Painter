@@ -6,8 +6,8 @@
 
 class Circle: public Graphics{
 public:
-    Circle();
-    Circle(QPoint center, QColor color = DEFAULT_COLOR, int width = DEFAULT_WIDTH);
+    Circle(int id);
+    Circle(int id, QPoint center, QColor color = DEFAULT_COLOR, int width = DEFAULT_WIDTH);
     virtual ~Circle(){}
     void setPoint(QPoint point);
     void drawLogic();

@@ -1,10 +1,11 @@
 #include "graphics.h"
 
-Graphics::Graphics(QColor c, int w): color(c), width(w), isErased(false){
+Graphics::Graphics(int id, QColor c, int w): id(id), color(c), width(w), isErased(false){
     oldColor = color;
 }
 
 Graphics::Graphics(const Graphics& g){
+    //id暂不考虑，QT版本不考虑id
     this->color = g.color;
     this->width = g.width;
     this->isErased = g.isErased;
@@ -86,17 +87,25 @@ bool Graphics::pointIsIn(QPoint point){
     int px = point.x();
     int py = point.y();
     for(int i = 0; i < points.size(); ++i){
-        int x = points[i]->x();
-        int y = points[i]->y();
-        if(px == x && py == y)  return true;
-        if(px == x && py == y + 1)  return true;
-        if(px == x && py == y - 1)  return true;
-        if(px == x - 1 && py == y)  return true;
-        if(px == x - 1 && py == y + 1)  return true;
-        if(px == x - 1 && py == y - 1)  return true;
-        if(px == x + 1 && py == y)  return true;
-        if(px == x + 1 && py == y + 1)  return true;
-        if(px == x + 1 && py == y - 1)  return true;
+
+//        if(px == x && py == y)  return true;
+//        if(px == x && py == y + 1)  return true;
+//        if(px == x && py == y - 1)  return true;
+//        if(px == x - 1 && py == y)  return true;
+//        if(px == x - 1 && py == y + 1)  return true;
+//        if(px == x - 1 && py == y - 1)  return true;
+//        if(px == x + 1 && py == y)  return true;
+//        if(px == x + 1 && py == y + 1)  return true;
+//        if(px == x + 1 && py == y - 1)  return true;
+        for(int j = width * -1 + 1; j <= width - 1; ++j){
+            for(int k = width * -1 + 1; k <= width - 1; ++k){
+                int x = points[i]->x() + j;
+                int y = points[i]->y() + k;
+                if(px == x && py == y){
+                    return true;
+                }
+            }
+        }
     }
     return false;
 }

@@ -11,6 +11,7 @@
 #include <QSpinBox>
 #include "paint2dwidget.h"
 
+
 namespace Ui {
 class MainWindow; 
 }
@@ -20,7 +21,7 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit MainWindow(QWidget *parent = nullptr);
+    explicit MainWindow(const char* file = nullptr, QWidget *parent = nullptr);
     ~MainWindow();
 
 private:
@@ -89,6 +90,7 @@ private slots:
 
     void graphicsCopy_triggered();
     void graphicsPaste_triggered();
+    void on_ResetButton_clicked();
 };
 
 #endif // MAINWINDOW_H

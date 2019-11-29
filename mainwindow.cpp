@@ -1,28 +1,33 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-MainWindow::MainWindow(QWidget *parent) :
+MainWindow::MainWindow(const char* file, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow){
     ui->setupUi(this);
     resize(800, 600);
     setWindowTitle("Painter");
+//    setWindowTitle(file);
     fileName = nullptr;
 
     setAction();
 
-    paint2DWidget = new Paint2DWidget;
+    paint2DWidget = new Paint2DWidget(file);
     paint2DWidget->setMode(NONE);
     ui->Canvas->addWidget(paint2DWidget);
     paint3DWidget = new QOpenGLWidget;
     ui->Canvas->addWidget(paint3DWidget);
     paint3DWidget->hide();
-
+    this->show();
+//    //QT模式
+//    if(file == nullptr){
+//        this->show();
+//    }
 }
 
 void MainWindow::setAction(){
+    //文件操作
     fileMenu = ui->menuBar->addMenu("File");
-
     //新建窗口
     newWindowAction = new QAction("New");
     newWindowAction->setShortcut(QKeySequence::New);
@@ -39,15 +44,14 @@ void MainWindow::setAction(){
     pasteAction = new QAction("Paste");
     pasteAction->setShortcut(QKeySequence::Paste);
     connect(pasteAction, SIGNAL(triggered(bool)), this, SLOT(graphicsPaste_triggered()));
-
     fileMenu->addAction(newWindowAction);
     fileMenu->addAction(saveFileAction);
     fileMenu->addAction(copyAction);
     fileMenu->addAction(pasteAction);
 
 
+    //图元操作
     transformMenu = ui->menuBar->addMenu("Transform");
-
     //平移
     translationAction = new QAction("Translation");
     connect(translationAction, SIGNAL(triggered(bool)), this, SLOT(on_actionTranslation_triggered()));
@@ -60,12 +64,12 @@ void MainWindow::setAction(){
     //缩放
     cropAction = new QAction("Crop");
     connect(cropAction, SIGNAL(triggered(bool)), this, SLOT(on_actionCrop_triggered()));
-
     transformMenu->addAction(translationAction);
     transformMenu->addAction(rotateAction);
     transformMenu->addAction(scaleAction);
     transformMenu->addAction(cropAction);
 
+    //直线算法选择
     DDAAction = new QAction("DDA");
     connect(DDAAction, SIGNAL(triggered(bool)), this, SLOT(on_actionDDA_triggered()));
     BresenhamAction = new QAction("BresenHam");
@@ -73,6 +77,7 @@ void MainWindow::setAction(){
     ui->LineToolButton->addAction(DDAAction);
     ui->LineToolButton->addAction(BresenhamAction);
 
+    //裁剪算法选择
     CSAction = new QAction("CS");
     connect(CSAction, SIGNAL(triggered(bool)), this, SLOT(on_actionCS_triggered()));
     LBAction = new QAction("LB");
@@ -295,4 +300,9 @@ void MainWindow::graphicsPaste_triggered(){
 void MainWindow::on_SelectBlockButton_clicked(){
     ui->ModeLabel->setText("Select Block");
     paint2DWidget->setMode(SELECTBOLCK);
+}
+
+void MainWindow::on_ResetButton_clicked(){
+    ui->ModeLabel->setText("None");
+    paint2DWidget->reset();
 }

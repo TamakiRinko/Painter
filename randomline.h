@@ -6,8 +6,8 @@
 
 class RandomLine: public Graphics{
 public:
-    RandomLine();
-    RandomLine(QPoint startPoint, QColor color = DEFAULT_COLOR, int width = DEFAULT_WIDTH);
+    RandomLine(int id);
+    RandomLine(int id, QPoint startPoint, QColor color = DEFAULT_COLOR, int width = DEFAULT_WIDTH);
     virtual ~RandomLine(){}
     void setPoint(QPoint nextPoint);
     void drawLogic();

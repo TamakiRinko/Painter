@@ -9,19 +9,21 @@
 #include "ellipse.h"
 #include "polygon.h"
 #include "randomline.h"
+#include "commandstructure.h"
 #include <QWidget>
 #include <QPen>
 #include <QBrush>
 #include <QMouseEvent>
 #include <QDebug>
 #include <QAction>
+#include <unordered_map>
 
 
 class Paint2DWidget : public QWidget{
     Q_OBJECT
 
 public:
-    explicit Paint2DWidget(QWidget *parent = nullptr);
+    explicit Paint2DWidget(const char* fileName = nullptr, QWidget *parent = nullptr);
     void setMode(Mode mode);
     void setColor(QColor color);
     void setWidth(int width);
@@ -35,8 +37,10 @@ public:
     void saveTo(QString fileName, const char* format = "bmp");            //保存为指定格式
     void graphicsCopy();
     void graphicsPaste();
+    void reset();
 
 private:
+    int curId;                                  //全局Id序列
     Mode curMode;                               //当前的模式
     QColor curColor;                            //当前选择的颜色
     int curWidth;                               //当前的宽度
@@ -48,7 +52,7 @@ private:
     bool isModified;                            //画板是否已经被修改
 
     QPoint pressPoint;                          //鼠标按下时的坐标
-    QVector<int> transformIndexList;            //需要进行转换的图元的下标列表
+//    QVector<int> transformIndexList;            //需要进行转换的图元的下标列表
     QVector<Graphics* > transformGraphicsList;  //需要进行转换的图元列表
     QVector<Graphics* > copyGraphicsList;       //复制的图元列表
     bool hasSelected;                           //已经选中
@@ -75,6 +79,16 @@ private:
     void clearList(QVector<Graphics* >* list);      //清理
     void setListColor(QVector<Graphics* >* list);   //上色
     void rectangleCalculate(QPoint& startPoint, QPoint& endPoint);             //把选取矩的形边框画出来
+
+
+    ofstream fout;                              //debug输出
+    ifstream fin;                               //读入指令
+    unordered_map<string, LineAlgorithm> LineAlgorithmMap;
+
+    void resetCanvasCommand();
+    void setColorCommand();
+    void drawLineCommand();
+    void saveCanvasCommand();
 
 protected:
     void paintEvent(QPaintEvent* e);

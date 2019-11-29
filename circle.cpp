@@ -1,11 +1,11 @@
 #include "circle.h"
 
-Circle::Circle(): Graphics(DEFAULT_COLOR, DEFAULT_WIDTH){
+Circle::Circle(int id): Graphics(id, DEFAULT_COLOR, DEFAULT_WIDTH){
     radius = 0;
     mode = CIRCLE;
 }
 
-Circle::Circle(QPoint center, QColor color, int width): Graphics(color, width){
+Circle::Circle(int id, QPoint center, QColor color, int width): Graphics(id, color, width){
     this->center = center;
     this->backCenter = center;
     radius = 0;

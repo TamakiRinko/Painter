@@ -24,7 +24,7 @@ enum LineAlgorithm{
 };
 
 enum CropAlgorithm{
-    CS, LB
+    CS, LB, WA
 };
 
 const QColor DEFAULT_COLOR = Qt::black;
@@ -41,7 +41,7 @@ const int UP = 8;
 class Graphics{
 public:
     Graphics(): isErased(false){}
-    Graphics(QColor c, int w);
+    Graphics(int id, QColor c, int w);
     Graphics(const Graphics& g);
 
     QPoint& operator[](int i);
@@ -71,7 +71,8 @@ public:
     virtual void scale(const QPoint* point, double times) = 0;      //图元缩放
     virtual bool crop(int xMin, int xMax, int yMin, int yMax, CropAlgorithm curAlg) = 0;    //图元裁剪
 protected:
-    QVector<QPoint* > points;
+    int id;                                                 //编号
+    QVector<QPoint* > points;                               //图元点集
     QColor color;
     QColor oldColor;                                        //之前的颜色
     int width;                                              //像素

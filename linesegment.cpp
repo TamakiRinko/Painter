@@ -1,10 +1,10 @@
 #include "linesegment.h"
 
-LineSegment::LineSegment(): Graphics(DEFAULT_COLOR, DEFAULT_WIDTH){
+LineSegment::LineSegment(int id): Graphics(id, DEFAULT_COLOR, DEFAULT_WIDTH){
     mode = LINESEGMENT;
 }
 
-LineSegment::LineSegment(QPoint startPoint, QColor color, int width, LineAlgorithm alg): Graphics(color, width){
+LineSegment::LineSegment(int id, QPoint startPoint, QColor color, int width, LineAlgorithm alg): Graphics(id, color, width){
     mode = LINESEGMENT;
     this->startPoint = startPoint;
     this->alg = alg;
@@ -18,7 +18,7 @@ LineSegment::LineSegment(QPoint startPoint, QColor color, int width, LineAlgorit
  * @param width
  * 两个点已经给出，点集直接计算
  */
-LineSegment::LineSegment(QPoint startPoint, QPoint endPoint, QColor color, int width, LineAlgorithm alg): Graphics(color, width){
+LineSegment::LineSegment(int id, QPoint startPoint, QPoint endPoint, QColor color, int width, LineAlgorithm alg): Graphics(id, color, width){
     mode = LINESEGMENT;
     this->startPoint = startPoint;
     this->endPoint = endPoint;

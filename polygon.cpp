@@ -1,6 +1,6 @@
 #include "polygon.h"
 
-Polygon::Polygon(): Graphics(DEFAULT_COLOR, DEFAULT_WIDTH){
+Polygon::Polygon(int id): Graphics(id, DEFAULT_COLOR, DEFAULT_WIDTH){
     mode = POLYGON;
 }
 
@@ -19,7 +19,7 @@ Polygon::Polygon(const Polygon& p): Graphics (p){
     }
 }
 
-Polygon::Polygon(QPoint startPoint, QColor color, int width, LineAlgorithm alg): Graphics(color, width){
+Polygon::Polygon(int id, QPoint startPoint, QColor color, int width, LineAlgorithm alg): Graphics(id, color, width){
     mode = POLYGON;
     this->startPoint = new QPoint(startPoint);
 //    this->curPoint = startPoint;
@@ -49,7 +49,7 @@ void Polygon::setNextPoint(QPoint nextPoint){
     QPoint* next = new QPoint(nextPoint);
     vertexList.append(next);
     num++;
-    LineSegment* line = new LineSegment(*(vertexList[num - 2]), *(vertexList[num - 1]), color, width, alg);
+    LineSegment* line = new LineSegment(id, *(vertexList[num - 2]), *(vertexList[num - 1]), color, width, alg);
     lineList.append(line);
 }
 
@@ -95,7 +95,7 @@ bool Polygon::isNotGraphics(){
  * 首尾相连，结束绘制
  */
 void Polygon::complete(){
-    LineSegment* line = new LineSegment(*(vertexList[0]), *(vertexList[num - 1]), color, width, alg);
+    LineSegment* line = new LineSegment(id, *(vertexList[0]), *(vertexList[num - 1]), color, width, alg);
     lineList.append(line);
 }
 
@@ -137,5 +137,21 @@ void Polygon::scale(const QPoint* point, double times){
         lineList[i]->scale(point, times);
     }
     drawLogic();
+}
+
+bool Polygon::crop(int xMin, int xMax, int yMin, int yMax, CropAlgorithm curAlg){
+    this->xMin = xMin;
+    this->xMax = xMax;
+    this->yMin = yMin;
+    this->yMax = yMax;
+
+    if(curAlg == CropAlgorithm::WA){
+        return WA();
+    }
+    return true;
+}
+
+bool Polygon::WA(){
+
 }
 
