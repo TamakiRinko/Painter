@@ -5,7 +5,8 @@ int main(int argc, char *argv[]){
     QApplication a(argc, argv);
     if(argc == 2){
         MainWindow w(argv[1]);
-        return a.exec();
+        a.exit();
+        return 0;
     }else{
         MainWindow w;
         return a.exec();

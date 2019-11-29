@@ -9,6 +9,7 @@ public:
     Ellipse(int id, QPoint center, QColor color = DEFAULT_COLOR, int width = DEFAULT_WIDTH);
     virtual ~Ellipse(){}
     void setPoint(QPoint point);
+    void setR(int rx, int ry);
     void drawLogic();
     bool isNotGraphics();
     void translation(int xOffset, int yOffset);

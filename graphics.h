@@ -61,6 +61,7 @@ public:
     void resetColor();
     int getNum();
     int getWidth();
+    int getId();
     Mode getMode();
 
     virtual ~Graphics();

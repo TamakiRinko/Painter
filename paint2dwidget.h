@@ -9,7 +9,7 @@
 #include "ellipse.h"
 #include "polygon.h"
 #include "randomline.h"
-#include "commandstructure.h"
+#include "command.h"
 #include <QWidget>
 #include <QPen>
 #include <QBrush>
@@ -83,12 +83,23 @@ private:
 
     ofstream fout;                              //debug输出
     ifstream fin;                               //读入指令
+    unordered_map<string, void (Paint2DWidget::*)()> commandMap;
     unordered_map<string, LineAlgorithm> LineAlgorithmMap;
+    unordered_map<string, CropAlgorithm> CropAlgorithmMap;
+    Graphics* curTransformGraphics;             //命令行时当前处理的图元
 
+    void insertMap();
+    int findGraphics(int id);
     void resetCanvasCommand();
+    void saveCanvasCommand();
     void setColorCommand();
     void drawLineCommand();
-    void saveCanvasCommand();
+    void drawEllipse();
+    void drawPolygon();
+    void translateCommand();
+    void scaleCommand();
+    void clipCommand();
+    void rotateCommand();
 
 protected:
     void paintEvent(QPaintEvent* e);

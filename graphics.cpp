@@ -43,6 +43,10 @@ int Graphics::getWidth(){
     return width;
 }
 
+int Graphics::getId(){
+    return id;
+}
+
 const QVector<QPoint* >& Graphics::getPoints() const{
     return points;
 }

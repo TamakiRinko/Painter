@@ -18,11 +18,11 @@ MainWindow::MainWindow(const char* file, QWidget *parent) :
     paint3DWidget = new QOpenGLWidget;
     ui->Canvas->addWidget(paint3DWidget);
     paint3DWidget->hide();
-    this->show();
-//    //QT模式
-//    if(file == nullptr){
-//        this->show();
-//    }
+
+    //QT模式
+    if(file == nullptr){
+        this->show();
+    }
 }
 
 void MainWindow::setAction(){

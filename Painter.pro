@@ -34,8 +34,7 @@ SOURCES += \
     eraser.cpp \
     ellipse.cpp \
     polygon.cpp \
-    randomline.cpp \
-    commandstructure.cpp
+    randomline.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -47,7 +46,7 @@ HEADERS += \
     ellipse.h \
     polygon.h \
     randomline.h \
-    commandstructure.h
+    command.h
 
 FORMS += \
         mainwindow.ui

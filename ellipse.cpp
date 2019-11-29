@@ -17,6 +17,13 @@ void Ellipse::setPoint(QPoint point){
     ry = abs(outPoint.y() - center.y());
 }
 
+void Ellipse::setR(int rx, int ry){
+    this->rx = rx;
+    this->ry = ry;
+    QPoint p(center.x() + rx, center.y() + ry);
+    outPoint = p;
+}
+
 bool Ellipse::isNotGraphics(){
     return (center.x() == outPoint.x() && center.y() == outPoint.y());
 }

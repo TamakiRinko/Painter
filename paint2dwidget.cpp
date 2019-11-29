@@ -9,24 +9,18 @@ Paint2DWidget::Paint2DWidget(const char* fileName, QWidget *parent) :
     curLineAlg = BRESENHAM;
     curCropAlg = CS;
     curGraphics = nullptr;
+    curTransformGraphics = nullptr;
     rotatePoint = nullptr;
     scalePoint = nullptr;
     eraser = &Eraser::getInstance();
     isModified = false;
     hasSelected = false;
 
-    fout.open("debug.txt", ios::out);
 
 
     if(fileName != nullptr){
-        unordered_map<string, void (Paint2DWidget::*)()> commandMap;
-        commandMap.insert(pair<string, void (Paint2DWidget::*)()>("resetCanvas", &Paint2DWidget::resetCanvasCommand));
-        commandMap.insert(pair<string, void (Paint2DWidget::*)()>("setColor", &Paint2DWidget::setColorCommand));
-        commandMap.insert(pair<string, void (Paint2DWidget::*)()>("drawLine", &Paint2DWidget::drawLineCommand));
-        commandMap.insert(pair<string, void (Paint2DWidget::*)()>("saveCanvas", &Paint2DWidget::saveCanvasCommand));
-        LineAlgorithmMap.insert(pair<string, LineAlgorithm>("DDA", DDA));
-        LineAlgorithmMap.insert(pair<string, LineAlgorithm>("Bresenham", BRESENHAM));
-
+        insertMap();
+        fout.open("debug.txt", ios::out);                   //调试用
         fin.open(fileName, ios::in);
         string order;
         fin >> order;
@@ -610,26 +604,67 @@ void Paint2DWidget::wheelEvent(QWheelEvent* e){
 
 }
 
+void Paint2DWidget::insertMap(){
+    commandMap.insert(pair<string, void (Paint2DWidget::*)()>("resetCanvas", &Paint2DWidget::resetCanvasCommand));
+    commandMap.insert(pair<string, void (Paint2DWidget::*)()>("setColor", &Paint2DWidget::setColorCommand));
+    commandMap.insert(pair<string, void (Paint2DWidget::*)()>("drawLine", &Paint2DWidget::drawLineCommand));
+    commandMap.insert(pair<string, void (Paint2DWidget::*)()>("saveCanvas", &Paint2DWidget::saveCanvasCommand));
+    commandMap.insert(pair<string, void (Paint2DWidget::*)()>("clip", &Paint2DWidget::clipCommand));
+    commandMap.insert(pair<string, void (Paint2DWidget::*)()>("rotate", &Paint2DWidget::rotateCommand));
+    commandMap.insert(pair<string, void (Paint2DWidget::*)()>("drawEllipse", &Paint2DWidget::drawEllipse));
+    commandMap.insert(pair<string, void (Paint2DWidget::*)()>("drawPolygon", &Paint2DWidget::drawPolygon));
+    commandMap.insert(pair<string, void (Paint2DWidget::*)()>("translate", &Paint2DWidget::translateCommand));
+    commandMap.insert(pair<string, void (Paint2DWidget::*)()>("scale", &Paint2DWidget::scaleCommand));
+    LineAlgorithmMap.insert(pair<string, LineAlgorithm>("DDA", DDA));
+    LineAlgorithmMap.insert(pair<string, LineAlgorithm>("Bresenham", BRESENHAM));
+    CropAlgorithmMap.insert(pair<string, CropAlgorithm>("Cohen-Sutherland", CS));
+    CropAlgorithmMap.insert(pair<string, CropAlgorithm>("Liang-Barsky", LB));
+}
+
+int Paint2DWidget::findGraphics(int id){
+    int index = 0;
+    bool flag = false;
+    for(int i = 0; i < graphicsList.size(); ++i){
+        if(graphicsList[i]->getId() == id){
+            curTransformGraphics = graphicsList[i];
+            index = i;
+            flag = true;
+            break;
+        }
+    }
+    if(flag){
+        return index;
+    }
+    return -1;
+}
+
 void Paint2DWidget::resetCanvasCommand(){
-    struct::resetCanvas r;
+    struct::ResetCanvas r;
     fin >> r;
     reset();
     resize(r.width, r.height);
-    fout << r.width << " " << r.height << endl;
+//    fout << r.width << " " << r.height << endl;
+}
+
+void Paint2DWidget::saveCanvasCommand(){
+    struct::SaveCanvas s;
+    fin >> s;
+    QString name((s.fileName + ".bmp").c_str());
+    saveTo(name);
 }
 
 void Paint2DWidget::setColorCommand(){
-    struct::setColor s;
+    struct::SetColor s;
     fin >> s;
     QColor q(s.R, s.G, s.B);
     setColor(q);
-    fout << s.R << " " << s.G << " " << s.B << endl;
+//    fout << s.R << " " << s.G << " " << s.B << endl;
 }
 
 void Paint2DWidget::drawLineCommand(){
-    struct::drawLine d;
+    struct::DrawLine d;
     fin >> d;
-    fout << d;
+//    fout << d;
     QPoint startPoint(d.x1, d.y1);
     QPoint endPoint(d.x2, d.y2);
     curGraphics = new LineSegment(d.id, startPoint, curColor, curWidth, LineAlgorithmMap[d.alg]);
@@ -643,9 +678,101 @@ void Paint2DWidget::drawLineCommand(){
     update();
 }
 
-void Paint2DWidget::saveCanvasCommand(){
-    struct::saveCanvas s;
+void Paint2DWidget::drawEllipse(){
+    struct::DrawEllipse d;
+    fin >> d;
+    QPoint point(d.x, d.y);
+    curGraphics = new Ellipse(d.id, point, curColor, curWidth);
+    Ellipse* curEllipse = (Ellipse* )curGraphics;
+    curEllipse->setR(d.rx, d.ry);
+    if(!curEllipse->isNotGraphics()){
+        curGraphics->drawLogic();
+        graphicsList.append(curGraphics);
+    }
+    curGraphics = nullptr;
+    update();
+}
+
+void Paint2DWidget::drawPolygon(){
+    struct::DrawPolygon d;
+    fin >> d;
+
+    QPoint p(d.points[0].first, d.points[0].second);
+    curGraphics = new Polygon(d.id, p, curColor, curWidth, LineAlgorithmMap[d.alg]);
+    Polygon* curPolygon = (Polygon* )curGraphics;
+    for(int i = 1; i < d.n; ++i){
+        QPoint point(d.points[i].first, d.points[i].second);
+        curPolygon->setNextPoint(point);
+    }
+    curPolygon->complete();
+    if(!curGraphics->isNotGraphics()){
+        curGraphics->drawLogic();
+        graphicsList.append(curGraphics);
+    }
+    curGraphics = nullptr;
+    update();
+}
+
+void Paint2DWidget::rotateCommand(){
+    struct::Rotate r;
+    fin >> r;
+    if(rotatePoint != nullptr){
+        delete rotatePoint;
+        rotatePoint = nullptr;
+    }
+    rotatePoint = new QPoint(r.x, r.y);
+    int index = findGraphics(r.id);
+    if(curTransformGraphics != nullptr && index != -1){
+        curTransformGraphics->rotation(rotatePoint, r.degree);
+    }
+    curTransformGraphics = nullptr;
+    update();
+}
+
+void Paint2DWidget::translateCommand(){
+    struct::Translate t;
+    fin >> t;
+    int index = findGraphics(t.id);
+    if(curTransformGraphics != nullptr && index != -1){
+        curTransformGraphics->translation(t.xOffset, t.yOffset);
+    }
+    curTransformGraphics = nullptr;
+    update();
+}
+
+void Paint2DWidget::scaleCommand(){
+    struct::Scale s;
     fin >> s;
-    QString name((s.fileName + ".bmp").c_str());
-    saveTo(name);
+    if(scalePoint != nullptr){
+        delete scalePoint;
+        scalePoint = nullptr;
+    }
+    scalePoint = new QPoint(s.x, s.y);
+    int index = findGraphics(s.id);
+    if(curTransformGraphics != nullptr && index != -1){
+        curTransformGraphics->scale(scalePoint, s.s);
+    }
+    curTransformGraphics = nullptr;
+    update();
+}
+
+void Paint2DWidget::clipCommand(){
+    struct::Clip c;
+    fin >> c;
+
+    int xMin = c.x1;
+    int xMax = c.x2;
+    int yMin = c.y1;
+    int yMax = c.y2;
+
+    int index = findGraphics(c.id);
+
+    if(curTransformGraphics != nullptr && index != -1){
+        if(curTransformGraphics->crop(xMin, xMax, yMin, yMax, CropAlgorithmMap[c.alg]) == false){
+            delete curTransformGraphics;
+            graphicsList.erase(graphicsList.begin() + index);
+        }
+    }
+    curTransformGraphics = nullptr;
+    update();
 }
