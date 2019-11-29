@@ -14,10 +14,13 @@ public:
     bool isNotGraphics();
     void translation(int xOffset, int yOffset);
     void rotation(const QPoint* point, int degree);
+    void scale(const QPoint* point, double times);
+    bool crop(int xMin, int xMax, int yMin, int yMax, CropAlgorithm curAlg){
+        return true;
+    }
 private:
     QPoint curPoint;
     LineSegment* line;                      //两点之间画线
-
 };
 
 #endif // RANDOMLINE_H

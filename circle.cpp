@@ -7,6 +7,7 @@ Circle::Circle(): Graphics(DEFAULT_COLOR, DEFAULT_WIDTH){
 
 Circle::Circle(QPoint center, QColor color, int width): Graphics(color, width){
     this->center = center;
+    this->backCenter = center;
     radius = 0;
     mode = CIRCLE;
 }
@@ -15,6 +16,8 @@ void Circle::setPoint(QPoint point){
     outPoint = point;
     radius = (int)(sqrtf((outPoint.x() - center.x()) * (outPoint.x() - center.x()) +
                    (outPoint.y() - center.y()) * (outPoint.y() - center.y())));
+    backOutPoint = outPoint;
+    backRadius = radius;
 }
 
 bool Circle::isNotGraphics(){
@@ -40,6 +43,13 @@ void Circle::translation(int xOffset, int yOffset){
 void Circle::rotation(const QPoint* point, int degree){
     pointRotation(&center, point, degree);
     pointRotation(&outPoint, point, degree);
+    drawLogic();
+}
+
+void Circle::scale(const QPoint* point, double times){
+    pointScale(&center, point, times);
+    pointScale(&outPoint, point, times);
+    setPoint(outPoint);
     drawLogic();
 }
 

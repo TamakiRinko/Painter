@@ -83,8 +83,32 @@ Mode Graphics::getMode(){
 }
 
 bool Graphics::pointIsIn(QPoint point){
+    int px = point.x();
+    int py = point.y();
     for(int i = 0; i < points.size(); ++i){
-        if(point.x() == points[i]->x() && point.y() == points[i]->y()){
+        int x = points[i]->x();
+        int y = points[i]->y();
+        if(px == x && py == y)  return true;
+        if(px == x && py == y + 1)  return true;
+        if(px == x && py == y - 1)  return true;
+        if(px == x - 1 && py == y)  return true;
+        if(px == x - 1 && py == y + 1)  return true;
+        if(px == x - 1 && py == y - 1)  return true;
+        if(px == x + 1 && py == y)  return true;
+        if(px == x + 1 && py == y + 1)  return true;
+        if(px == x + 1 && py == y - 1)  return true;
+    }
+    return false;
+}
+
+bool Graphics::pointIsInBlock(QPoint startPoint, QPoint endPoint){
+    int xMin = startPoint.x() > endPoint.x() ? endPoint.x() : startPoint.x();
+    int xMax = startPoint.x() < endPoint.x() ? endPoint.x() : startPoint.x();
+    int yMin = startPoint.y() > endPoint.y() ? endPoint.y() : startPoint.y();
+    int yMax = startPoint.y() < endPoint.y() ? endPoint.y() : startPoint.y();
+    for(int i = 0; i < points.size(); ++i){
+        if(points[i]->x() >= xMin && points[i]->x() <= xMax
+                && points[i]->y() >= yMin && points[i]->y() <= yMax){
             return true;
         }
     }
@@ -98,7 +122,35 @@ void Graphics::pointRotation(QPoint* movePoint, const QPoint* basePoint, int deg
     int moveY = movePoint->y() - basePoint->y();
     int mX = round(moveX * cos(de) - moveY * sin(de));                //四舍五入！
     int mY = round(moveX * sin(de) + moveY * cos(de));
-
     movePoint->setX(mX + basePoint->x());
     movePoint->setY(mY + basePoint->y());
+}
+
+void Graphics::pointScale(QPoint* scalePoint, const QPoint* basePoint, double times){
+    int scaleX = scalePoint->x() - basePoint->x();
+    int scaleY = scalePoint->y() - basePoint->y();
+    int sX = round(scaleX * times);
+    int sY = round(scaleY * times);
+    scalePoint->setX(sX + basePoint->x());
+    scalePoint->setY(sY + basePoint->y());
+}
+
+int Graphics::regionCode(int x, int y){
+    int xCode;
+    int yCode;
+    if(x < xMin){
+        xCode = LEFT;
+    }else if(x > xMax){
+        xCode = RIGHT;
+    }else{
+        xCode = MIDDLE;
+    }
+    if(y < yMin){                           //y方向相反!
+        yCode = UP;
+    }else if(y > yMax){
+        yCode = DOWN;
+    }else{
+        yCode = MIDDLE;
+    }
+    return xCode | yCode;
 }

@@ -34,14 +34,19 @@ private:
     QAction* saveFileAction;            //保存文件
     QAction* copyAction;                //复制
     QAction* pasteAction;               //粘贴
+
+    QAction* DDAAction;                 //选择DDA算法
+    QAction* BresenhamAction;           //选择Bresenham算法
+
+    QAction* CSAction;                  //选择Cohen-Sutherland算法
+    QAction* LBAction;                  //选择Liang-Barsky算法
+
     QAction* translationAction;         //平移
     QAction* rotateAction;              //旋转
-
+    QAction* scaleAction;               //缩放
+    QAction* cropAction;                //裁剪
 
     QString fileName;                   //保存的文件名
-
-
-
 
     void setAction();                   //设置Action
 
@@ -57,6 +62,11 @@ private slots:
     void newWindow();
     bool saveFile();
 
+    void on_actionDDA_triggered();
+    void on_actionBresenHam_triggered();
+    void on_actionCS_triggered();
+    void on_actionLB_triggered();
+
     void on_LineSegmentButton_clicked();
     void on_CircleButton_clicked();
     void on_EllipseButton_clicked();
@@ -71,7 +81,11 @@ private slots:
     void on_RandomLineButton_clicked();
     void on_actionTranslation_triggered();
     void on_actionRotation_triggered();
+    void on_actionScale_triggered();
+    void on_actionCrop_triggered();
+
     void on_SelectButton_clicked();
+    void on_SelectBlockButton_clicked();
 
     void graphicsCopy_triggered();
     void graphicsPaste_triggered();

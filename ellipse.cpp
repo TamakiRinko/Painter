@@ -44,6 +44,13 @@ void Ellipse::rotation(const QPoint* point, int degree){
     drawLogic();
 }
 
+void Ellipse::scale(const QPoint* point, double times){
+    pointScale(&center, point, times);
+    pointScale(&outPoint, point, times);
+    setPoint(outPoint);
+    drawLogic();
+}
+
 void Ellipse::mid(){
     int rx2 = rx * rx;
     int ry2 = ry * ry;

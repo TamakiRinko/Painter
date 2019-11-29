@@ -54,9 +54,31 @@ void MainWindow::setAction(){
     //旋转
     rotateAction = new QAction("Rotation");
     connect(rotateAction, SIGNAL(triggered(bool)), this, SLOT(on_actionRotation_triggered()));
+    //缩放
+    scaleAction = new QAction("Scale");
+    connect(scaleAction, SIGNAL(triggered(bool)), this, SLOT(on_actionScale_triggered()));
+    //缩放
+    cropAction = new QAction("Crop");
+    connect(cropAction, SIGNAL(triggered(bool)), this, SLOT(on_actionCrop_triggered()));
 
     transformMenu->addAction(translationAction);
     transformMenu->addAction(rotateAction);
+    transformMenu->addAction(scaleAction);
+    transformMenu->addAction(cropAction);
+
+    DDAAction = new QAction("DDA");
+    connect(DDAAction, SIGNAL(triggered(bool)), this, SLOT(on_actionDDA_triggered()));
+    BresenhamAction = new QAction("BresenHam");
+    connect(BresenhamAction, SIGNAL(triggered(bool)), this, SLOT(on_actionBresenHam_triggered()));
+    ui->LineToolButton->addAction(DDAAction);
+    ui->LineToolButton->addAction(BresenhamAction);
+
+    CSAction = new QAction("CS");
+    connect(CSAction, SIGNAL(triggered(bool)), this, SLOT(on_actionCS_triggered()));
+    LBAction = new QAction("LB");
+    connect(LBAction, SIGNAL(triggered(bool)), this, SLOT(on_actionLB_triggered()));
+    ui->CropToolButton->addAction(CSAction);
+    ui->CropToolButton->addAction(LBAction);
 }
 
 MainWindow::~MainWindow(){
@@ -113,22 +135,42 @@ void MainWindow::resizeEvent(QResizeEvent*){
     ui->WSpinBox->setValue(this->width());
 }
 
+void MainWindow::on_actionDDA_triggered(){
+    ui->LineToolButton->setText("DDA");
+    paint2DWidget->setLineAlgorithm(DDA);
+}
+
+void MainWindow::on_actionBresenHam_triggered(){
+    ui->LineToolButton->setText("BresenHam");
+    paint2DWidget->setLineAlgorithm(BRESENHAM);
+}
+
+void MainWindow::on_actionCS_triggered(){
+    ui->CropToolButton->setText("CS");
+    paint2DWidget->setCropAlgorithm(CS);
+}
+
+void MainWindow::on_actionLB_triggered(){
+    ui->CropToolButton->setText("LB");
+    paint2DWidget->setCropAlgorithm(LB);
+}
+
 void MainWindow::on_LineSegmentButton_clicked(){
     paint2DWidget->setMode(LINESEGMENT);
 
-    QMessageBox box(QMessageBox::Warning, "LineSegmentAlgorithm", "DDA or BresenHam?\n");
-    box.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
-    box.setButtonText(QMessageBox::Yes, QString("DDA"));
-    box.setButtonText(QMessageBox::No, QString("BresenHam"));
-    int button = box.exec();
-    if (button == QMessageBox::Yes){              //保存
-        paint2DWidget->setLineAlgorithm(DDA);
-        ui->ModeLabel->setText("LineSegment, DDA");
-    }
-    else if(button == QMessageBox::No){           //不保存
-        paint2DWidget->setLineAlgorithm(BRESENHAM);
-        ui->ModeLabel->setText("LineSegment, BresenHam");
-    }
+//    QMessageBox box(QMessageBox::Warning, "LineSegmentAlgorithm", "DDA or BresenHam?\n");
+//    box.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+//    box.setButtonText(QMessageBox::Yes, QString("DDA"));
+//    box.setButtonText(QMessageBox::No, QString("BresenHam"));
+//    int button = box.exec();
+//    if (button == QMessageBox::Yes){              //保存
+//        paint2DWidget->setLineAlgorithm(DDA);
+//        ui->ModeLabel->setText("LineSegment, DDA");
+//    }
+//    else if(button == QMessageBox::No){           //不保存
+//        paint2DWidget->setLineAlgorithm(BRESENHAM);
+//        ui->ModeLabel->setText("LineSegment, BresenHam");
+//    }
 }
 
 void MainWindow::on_RandomLineButton_clicked(){
@@ -138,20 +180,20 @@ void MainWindow::on_RandomLineButton_clicked(){
 
 void MainWindow::on_PolygonButton_clicked(){
     paint2DWidget->setMode(POLYGON);
-//    ui->ModeLabel->setText("Polygon");
-    QMessageBox box(QMessageBox::Warning, "PolygonAlgorithm", "DDA or BresenHam?\n");
-    box.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
-    box.setButtonText(QMessageBox::Yes, QString("DDA"));
-    box.setButtonText(QMessageBox::No, QString("BresenHam"));
-    int button = box.exec();
-    if (button == QMessageBox::Yes){              //保存
-        paint2DWidget->setLineAlgorithm(DDA);
-        ui->ModeLabel->setText("Polygon, DDA");
-    }
-    else if(button == QMessageBox::No){           //不保存
-        paint2DWidget->setLineAlgorithm(BRESENHAM);
-        ui->ModeLabel->setText("Polygon, BresenHam");
-    }
+
+//    QMessageBox box(QMessageBox::Warning, "PolygonAlgorithm", "DDA or BresenHam?\n");
+//    box.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+//    box.setButtonText(QMessageBox::Yes, QString("DDA"));
+//    box.setButtonText(QMessageBox::No, QString("BresenHam"));
+//    int button = box.exec();
+//    if (button == QMessageBox::Yes){              //保存
+//        paint2DWidget->setLineAlgorithm(DDA);
+//        ui->ModeLabel->setText("Polygon, DDA");
+//    }
+//    else if(button == QMessageBox::No){           //不保存
+//        paint2DWidget->setLineAlgorithm(BRESENHAM);
+//        ui->ModeLabel->setText("Polygon, BresenHam");
+//    }
 }
 
 void MainWindow::on_CircleButton_clicked(){
@@ -224,6 +266,16 @@ void MainWindow::on_actionRotation_triggered(){
     paint2DWidget->setMode(ROTATION);
 }
 
+void MainWindow::on_actionScale_triggered(){
+    ui->ModeLabel->setText("Scale");
+    paint2DWidget->setMode(SCALE);
+}
+
+void MainWindow::on_actionCrop_triggered(){
+    ui->ModeLabel->setText("Crop");
+    paint2DWidget->setMode(CROP);
+}
+
 void MainWindow::on_SelectButton_clicked(){
     ui->ModeLabel->setText("Select");
     paint2DWidget->setMode(SELECT);
@@ -238,4 +290,9 @@ void MainWindow::graphicsPaste_triggered(){
     ui->ModeLabel->setText("Paste");
     paint2DWidget->graphicsPaste();
     ui->ModeLabel->setText("Translation");
+}
+
+void MainWindow::on_SelectBlockButton_clicked(){
+    ui->ModeLabel->setText("Select Block");
+    paint2DWidget->setMode(SELECTBOLCK);
 }

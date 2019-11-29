@@ -100,6 +100,8 @@ void Polygon::complete(){
 }
 
 void Polygon::translation(int xOffset, int yOffset){
+    startPoint->setX(startPoint->x() + xOffset);
+    startPoint->setY(startPoint->y() + yOffset);
     //顶点移动
     for(int i = 0; i < vertexList.size(); ++i){
         vertexList[i]->setX(vertexList[i]->x() + xOffset);
@@ -112,13 +114,28 @@ void Polygon::translation(int xOffset, int yOffset){
 }
 
 void Polygon::rotation(const QPoint* point, int degree){
-    //顶点移动
+    pointRotation(startPoint, point, degree);
+    //顶点旋转
     for(int i = 0; i < vertexList.size(); ++i){
         pointRotation(vertexList[i], point, degree);
     }
-    //边移动
+    //边旋转
     for(int i = 0; i < lineList.size(); ++i){
         lineList[i]->rotation(point, degree);
     }
     drawLogic();
 }
+
+void Polygon::scale(const QPoint* point, double times){
+    pointScale(startPoint, point, times);
+    //顶点缩放
+    for(int i = 0; i < vertexList.size(); ++i){
+        pointScale(vertexList[i], point, times);
+    }
+    //边缩放
+    for(int i = 0; i < lineList.size(); ++i){
+        lineList[i]->scale(point, times);
+    }
+    drawLogic();
+}
+

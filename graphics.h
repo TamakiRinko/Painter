@@ -12,15 +12,19 @@
 #include <QDebug>
 using namespace std;
 
-
 class Graphics;
 
 enum Mode{
-    NONE, LINESEGMENT, RANDOMLINE, POLYGON, CIRCLE, ELLIPSE, ERASER, TRANSLATION, SELECT, ROTATION
+    NONE, LINESEGMENT, RANDOMLINE, POLYGON, CIRCLE, ELLIPSE, ERASER,
+    TRANSLATION, SELECT, ROTATION, SCALE, SELECTBOLCK, CROP
 };
 
 enum LineAlgorithm{
     DDA, BRESENHAM
+};
+
+enum CropAlgorithm{
+    CS, LB
 };
 
 const QColor DEFAULT_COLOR = Qt::black;
@@ -28,19 +32,28 @@ const int DEFAULT_WIDTH = 1;
 const LineAlgorithm DEFAULT_ALG = LineAlgorithm::BRESENHAM;
 const double PI = 3.1415;
 
+const int MIDDLE = 0;
+const int LEFT = 1;
+const int RIGHT = 2;
+const int DOWN = 4;
+const int UP = 8;
+
 class Graphics{
 public:
     Graphics(): isErased(false){}
     Graphics(QColor c, int w);
     Graphics(const Graphics& g);
-    virtual ~Graphics();
+
+    QPoint& operator[](int i);
+    void clear();
+    void append(QPoint* point);
+    bool pointIsIn(QPoint point);                                   //point是否在图形中
+    bool pointIsInBlock(QPoint startPoint, QPoint endPoint);        //图形是否有一部分在矩形中
+    void pointRotation(QPoint* movePoint, const QPoint* basePoint, int degree);            //点的旋转
+    void pointScale(QPoint* scalePoint, const QPoint* basePoint, double times);            //点的缩放
+    int regionCode(int x, int y);                                  //获得该点的区域码
 
     const QVector<QPoint* >& getPoints() const;                     //退而求其次，不可修改，只可拿到
-    void append(QPoint* point);
-    void clear();
-    bool pointIsIn(QPoint point);                                   //point是否在图形中
-    void pointRotation(QPoint* movePoint, const QPoint* basePoint, int degree);            //点的旋转
-
     void setIsErased(bool b);
     bool getIsErased();
     QColor& getColor();
@@ -50,12 +63,13 @@ public:
     int getWidth();
     Mode getMode();
 
-    QPoint& operator[](int i);
-
+    virtual ~Graphics();
     virtual void drawLogic() = 0;
     virtual bool isNotGraphics() = 0;
-    virtual void translation(int xOffset, int yOffset) = 0; //图元平移
-    virtual void rotation(const QPoint* point, int degree) = 0; //图元旋转
+    virtual void translation(int xOffset, int yOffset) = 0;         //图元平移
+    virtual void rotation(const QPoint* point, int degree) = 0;     //图元旋转
+    virtual void scale(const QPoint* point, double times) = 0;      //图元缩放
+    virtual bool crop(int xMin, int xMax, int yMin, int yMax, CropAlgorithm curAlg) = 0;    //图元裁剪
 protected:
     QVector<QPoint* > points;
     QColor color;
@@ -63,6 +77,11 @@ protected:
     int width;                                              //像素
     bool isErased;                                          //是否已经被删除
     Mode mode;                                              //自己的类型
+
+    int xMin;
+    int xMax;
+    int yMin;
+    int yMax;
 };
 
 

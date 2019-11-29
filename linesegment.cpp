@@ -28,6 +28,17 @@ LineSegment::LineSegment(QPoint startPoint, QPoint endPoint, QColor color, int w
     }
 }
 
+LineSegment::LineSegment(const LineSegment& l): Graphics (l){
+    this->startPoint = l.startPoint;
+    this->endPoint = l.endPoint;
+    this->alg = l.alg;
+    //重新指向startPoint和endPoint
+    delete points[0];
+    points[0] = &startPoint;
+    delete points[points.size() - 1];
+    points[points.size() - 1] = &endPoint;
+}
+
 void LineSegment::setEndPoint(QPoint endPoint){
     this->endPoint = endPoint;
 }
@@ -50,16 +61,35 @@ void LineSegment::translation(int xOffset, int yOffset){
         points[i]->setX(points[i]->x() + xOffset);
         points[i]->setY(points[i]->y() + yOffset);
     }
-    startPoint.setX(startPoint.x()+ xOffset);
-    startPoint.setY(startPoint.y()+ yOffset);
-    endPoint.setX(endPoint.x() + xOffset);
-    endPoint.setY(endPoint.y() + yOffset);
+//    startPoint.setX(startPoint.x()+ xOffset);
+//    startPoint.setY(startPoint.y()+ yOffset);
+//    endPoint.setX(endPoint.x() + xOffset);
+//    endPoint.setY(endPoint.y() + yOffset);
 }
 
 void LineSegment::rotation(const QPoint* point, int degree){
     pointRotation(&startPoint, point, degree);
     pointRotation(&endPoint, point, degree);
     drawLogic();
+}
+
+void LineSegment::scale(const QPoint* point, double times){
+    pointScale(&startPoint, point, times);
+    pointScale(&endPoint, point, times);
+    drawLogic();
+}
+
+bool LineSegment::crop(int xMin, int xMax, int yMin, int yMax, CropAlgorithm curAlg){
+    this->xMin = xMin;
+    this->xMax = xMax;
+    this->yMin = yMin;
+    this->yMax = yMax;
+    if(curAlg == CropAlgorithm::CS){
+        return CS();
+    }else if(curAlg == CropAlgorithm::LB){
+        return LB();
+    }
+    return true;
 }
 
 void LineSegment::bresenHam(){
@@ -123,6 +153,7 @@ void LineSegment::bresenHam(){
             old = temp;
         }while(old->x() != endPoint.x()|| old->y() != endPoint.y());
     }
+    points.push_back(&endPoint);
 }
 
 void LineSegment::DDA(){
@@ -175,4 +206,103 @@ void LineSegment::DDA(){
     }
     points.append(&endPoint);
     return;
+}
+
+bool LineSegment::CS(){
+    int x1 = startPoint.x();
+    int y1 = startPoint.y();
+    int x2 = endPoint.x();
+    int y2 = endPoint.y();
+    double k = x1 == x2 ? 0 : (y2 - y1) * 1.0 / (x2 - x1);      //斜率
+    bool isVertical = (x1 == x2);
+    int code1 = regionCode(x1, y1);                             //startPoint的区域码
+    int code2 = regionCode(x2, y2);                             //endPoint的区域码
+
+    while(true){
+        if(code1 == MIDDLE && code2 == MIDDLE){                 //全部在区域内部
+            break;
+        }else if((code1 & code2) != 0){                         //全部在区域外，需要将图元删除，直接返回
+            return false;
+        }
+
+        int code = code1 == MIDDLE ? code2 : code1;
+        int xCrop = 0;                                          //裁剪后的坐标
+        int yCrop = 0;
+        if((code & LEFT) != 0){
+            xCrop = xMin;
+            yCrop = round((xCrop - x1) * k) + y1;
+        }else if((code & RIGHT) != 0){
+            xCrop = xMax;
+            yCrop = round((xCrop - x1) * k) + y1;
+        }else if((code & DOWN) != 0){
+            yCrop = yMax;
+            xCrop = isVertical ? x1 : round((yCrop - y1) / k) + x1;
+        }else if((code & UP) != 0){
+            yCrop = yMin;
+            xCrop = isVertical ? x1 : round((yCrop - y1) / k) + x1;
+        }
+
+        if(code == code1){                                      //裁剪前部分
+            x1 = xCrop;
+            y1 = yCrop;
+            code1 = regionCode(x1, y1);
+        }else{                                                  //裁剪后部分
+            x2 = xCrop;
+            y2 = yCrop;
+            code2 = regionCode(x2, y2);
+        }
+    }
+
+    startPoint.setX(x1);
+    startPoint.setY(y1);
+    endPoint.setX(x2);
+    endPoint.setY(y2);
+    drawLogic();
+    return true;
+}
+
+bool LineSegment::LB(){
+    int x1 = startPoint.x();
+    int y1 = startPoint.y();
+    int x2 = endPoint.x();
+    int y2 = endPoint.y();
+    int p[5] = {0};
+    int q[5] = {0};
+    p[1] = x1 - x2;
+    p[2] = x2 - x1;
+    p[3] = y1 - y2;
+    p[4] = y2 - y1;
+    q[1] = x1 - xMin;
+    q[2] = xMax - x1;
+    q[3] = y1 - yMin;
+    q[4] = yMax - y1;
+
+    double ub = 0;
+    double ue = 1;
+
+    for(int i = 1; i < 5; ++i){
+        if(p[i] == 0 && q[i] < 0){
+            return false;
+        }else if(p[i] == 0){
+            continue;
+        }
+        double ui = q[i] * 1.0 / p[i];
+        if(p[i] < 0){
+            ub = ub > ui ? ub : ui;
+            if(ub > ue){
+                return false;
+            }
+        }else if(p[i] > 0){
+            ue = ue > ui ? ui : ue;
+            if(ub > ue){
+                return false;
+            }
+        }
+    }
+    startPoint.setX(x1 + round(ub * (x2 - x1)));
+    startPoint.setY(y1 + round(ub * (y2 - y1)));
+    endPoint.setX(x1 + round(ue * (x2 - x1)));
+    endPoint.setY(y1 + round(ue * (y2 - y1)));
+    drawLogic();
+    return true;
 }
