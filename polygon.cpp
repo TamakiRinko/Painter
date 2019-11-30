@@ -111,6 +111,7 @@ void Polygon::translation(int xOffset, int yOffset){
     for(int i = 0; i < lineList.size(); ++i){
         lineList[i]->translation(xOffset, yOffset);
     }
+    drawLogic();
 }
 
 void Polygon::rotation(const QPoint* point, int degree){

@@ -32,11 +32,11 @@ LineSegment::LineSegment(const LineSegment& l): Graphics (l){
     this->startPoint = l.startPoint;
     this->endPoint = l.endPoint;
     this->alg = l.alg;
-    //重新指向startPoint和endPoint
-    delete points[0];
-    points[0] = &startPoint;
-    delete points[points.size() - 1];
-    points[points.size() - 1] = &endPoint;
+//    //重新指向startPoint和endPoint
+//    delete points[0];
+//    points[0] = new QPoint(startPoint.x(), startPoint.y());
+//    delete points[points.size() - 1];
+//    points[points.size() - 1] = new QPoint(endPoint.x(), endPoint.y());
 }
 
 void LineSegment::setEndPoint(QPoint endPoint){
@@ -61,10 +61,10 @@ void LineSegment::translation(int xOffset, int yOffset){
         points[i]->setX(points[i]->x() + xOffset);
         points[i]->setY(points[i]->y() + yOffset);
     }
-//    startPoint.setX(startPoint.x()+ xOffset);
-//    startPoint.setY(startPoint.y()+ yOffset);
-//    endPoint.setX(endPoint.x() + xOffset);
-//    endPoint.setY(endPoint.y() + yOffset);
+    startPoint.setX(startPoint.x()+ xOffset);
+    startPoint.setY(startPoint.y()+ yOffset);
+    endPoint.setX(endPoint.x() + xOffset);
+    endPoint.setY(endPoint.y() + yOffset);
 }
 
 void LineSegment::rotation(const QPoint* point, int degree){
@@ -93,7 +93,8 @@ bool LineSegment::crop(int xMin, int xMax, int yMin, int yMax, CropAlgorithm cur
 }
 
 void LineSegment::bresenHam(){
-    points.append(&startPoint);
+//    points.append(&startPoint);
+    points.push_back(new QPoint(startPoint.x(), startPoint.y()));
 
     int flagX = 1;      //x增大or减小
     int flagY = 1;     //y增大or减小
@@ -153,11 +154,13 @@ void LineSegment::bresenHam(){
             old = temp;
         }while(old->x() != endPoint.x()|| old->y() != endPoint.y());
     }
-    points.push_back(&endPoint);
+//    points.push_back(&endPoint);
+    points.push_back(new QPoint(endPoint.x(), endPoint.y()));
 }
 
 void LineSegment::DDA(){
-    points.append(&startPoint);
+//    points.append(&startPoint);
+    points.push_back(new QPoint(startPoint.x(), startPoint.y()));
     int flagX = 1;      //x增大or减小
     int flagY = 1;     //y增大or减小
     int dx = endPoint.x() - startPoint.x();
@@ -204,7 +207,8 @@ void LineSegment::DDA(){
             points.append(temp);
         }
     }
-    points.append(&endPoint);
+//    points.append(&endPoint);
+    points.push_back(new QPoint(endPoint.x(), endPoint.y()));
     return;
 }
 

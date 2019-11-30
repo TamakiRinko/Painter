@@ -17,6 +17,9 @@
 #include <QDebug>
 #include <QAction>
 #include <unordered_map>
+#include <time.h>
+
+#define NN 100000
 
 
 class Paint2DWidget : public QWidget{

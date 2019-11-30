@@ -162,6 +162,7 @@ void MainWindow::on_actionLB_triggered(){
 
 void MainWindow::on_LineSegmentButton_clicked(){
     paint2DWidget->setMode(LINESEGMENT);
+    ui->ModeLabel->setText("LineSegment");
 
 //    QMessageBox box(QMessageBox::Warning, "LineSegmentAlgorithm", "DDA or BresenHam?\n");
 //    box.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
@@ -185,6 +186,7 @@ void MainWindow::on_RandomLineButton_clicked(){
 
 void MainWindow::on_PolygonButton_clicked(){
     paint2DWidget->setMode(POLYGON);
+    ui->ModeLabel->setText("Polygon");
 
 //    QMessageBox box(QMessageBox::Warning, "PolygonAlgorithm", "DDA or BresenHam?\n");
 //    box.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
@@ -304,5 +306,8 @@ void MainWindow::on_SelectBlockButton_clicked(){
 
 void MainWindow::on_ResetButton_clicked(){
     ui->ModeLabel->setText("None");
+    ui->WidthSpinBox->setValue(1);
+    ui->LineToolButton->setText("BresenHam");
+    ui->CropToolButton->setText("CS");
     paint2DWidget->reset();
 }

@@ -9,29 +9,6 @@ using namespace std;
 
 //};
 
-//class resetCanvas : public command{
-//private:
-//    int width;
-//    int height;
-//public:
-//    friend ifstream& operator>>(ifstream& fin, resetCanvas& r){
-//        fin >> r.width >> r.height;
-//        return fin;
-//    }
-//};
-
-//class setColor: public command{
-//private:
-//    int R;
-//    int G;
-//    int B;
-//public:
-//    friend ifstream& operator>>(ifstream& fin, setColor& s) {
-//        fin >> s.R >> s.G >> s.B;
-//        return fin;
-//    }
-//};
-
 struct ResetCanvas{
     int width;
     int height;

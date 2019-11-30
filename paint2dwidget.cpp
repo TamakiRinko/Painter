@@ -17,11 +17,13 @@ Paint2DWidget::Paint2DWidget(const char* fileName, QWidget *parent) :
     hasSelected = false;
 
 
-
     if(fileName != nullptr){
         insertMap();
         fout.open("debug.txt", ios::out);                   //调试用
         fin.open(fileName, ios::in);
+        if(!fin.is_open() || !fout.is_open()){
+            return;
+        }
         string order;
         fin >> order;
         while(!fin.fail()){
@@ -664,7 +666,7 @@ void Paint2DWidget::setColorCommand(){
 void Paint2DWidget::drawLineCommand(){
     struct::DrawLine d;
     fin >> d;
-//    fout << d;
+
     QPoint startPoint(d.x1, d.y1);
     QPoint endPoint(d.x2, d.y2);
     curGraphics = new LineSegment(d.id, startPoint, curColor, curWidth, LineAlgorithmMap[d.alg]);
@@ -675,7 +677,19 @@ void Paint2DWidget::drawLineCommand(){
         graphicsList.append(curGraphics);                               //加入已有图形列表
     }
     curGraphics = nullptr;
-    update();
+
+//    for(int i = 0; i < NN; ++i){
+//        QPoint startPoint(d.x1, d.y1);
+//        QPoint endPoint(d.x2, d.y2);
+//        curGraphics = new LineSegment(d.id + i, startPoint, curColor, curWidth, LineAlgorithmMap[d.alg]);
+//        LineSegment* curLine = (LineSegment* )curGraphics;
+//        curLine->setEndPoint(endPoint);
+//        if(!curLine->isNotGraphics()){                                      //可能只是一个点
+//            curGraphics->drawLogic();
+//            graphicsList.append(curGraphics);                               //加入已有图形列表
+//        }
+//        curGraphics = nullptr;
+//    }
 }
 
 void Paint2DWidget::drawEllipse(){
@@ -690,7 +704,6 @@ void Paint2DWidget::drawEllipse(){
         graphicsList.append(curGraphics);
     }
     curGraphics = nullptr;
-    update();
 }
 
 void Paint2DWidget::drawPolygon(){
@@ -710,7 +723,6 @@ void Paint2DWidget::drawPolygon(){
         graphicsList.append(curGraphics);
     }
     curGraphics = nullptr;
-    update();
 }
 
 void Paint2DWidget::rotateCommand(){
@@ -726,7 +738,6 @@ void Paint2DWidget::rotateCommand(){
         curTransformGraphics->rotation(rotatePoint, r.degree);
     }
     curTransformGraphics = nullptr;
-    update();
 }
 
 void Paint2DWidget::translateCommand(){
@@ -737,7 +748,6 @@ void Paint2DWidget::translateCommand(){
         curTransformGraphics->translation(t.xOffset, t.yOffset);
     }
     curTransformGraphics = nullptr;
-    update();
 }
 
 void Paint2DWidget::scaleCommand(){
@@ -753,7 +763,6 @@ void Paint2DWidget::scaleCommand(){
         curTransformGraphics->scale(scalePoint, s.s);
     }
     curTransformGraphics = nullptr;
-    update();
 }
 
 void Paint2DWidget::clipCommand(){
@@ -774,5 +783,25 @@ void Paint2DWidget::clipCommand(){
         }
     }
     curTransformGraphics = nullptr;
-    update();
+
+//    clock_t startTime,endTime;
+//    startTime = clock();
+//    for(int i = 0; i < 100000; ++i){
+//        int xMin = c.x1;
+//        int xMax = c.x2;
+//        int yMin = c.y1;
+//        int yMax = c.y2;
+
+//        int index = findGraphics(c.id + i);
+
+//        if(curTransformGraphics != nullptr && index != -1){
+//            if(curTransformGraphics->crop(xMin, xMax, yMin, yMax, CropAlgorithmMap[c.alg]) == false){
+//                delete curTransformGraphics;
+//                graphicsList.erase(graphicsList.begin() + index);
+//            }
+//        }
+//        curTransformGraphics = nullptr;
+//    }
+//    endTime = clock();
+//    fout << (double)(endTime - startTime) / CLOCKS_PER_SEC << "s" << endl;
 }
