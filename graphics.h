@@ -15,7 +15,7 @@ using namespace std;
 class Graphics;
 
 enum Mode{
-    NONE, LINESEGMENT, RANDOMLINE, POLYGON, CIRCLE, ELLIPSE, ERASER,
+    NONE, LINESEGMENT, RANDOMLINE, POLYGON, CIRCLE, ELLIPSE, CURVE, ERASER,
     TRANSLATION, SELECT, ROTATION, SCALE, SELECTBOLCK, CROP
 };
 
@@ -25,6 +25,10 @@ enum LineAlgorithm{
 
 enum CropAlgorithm{
     CS, LB, WA
+};
+
+enum CurveAlgorithm{
+    BEZIER, BSPLINE
 };
 
 const QColor DEFAULT_COLOR = Qt::black;
@@ -37,6 +41,9 @@ const int LEFT = 1;
 const int RIGHT = 2;
 const int DOWN = 4;
 const int UP = 8;
+
+const int maxCurveNum = 50;                  //曲线控制点数
+const int stepsNum = 5000;                  //曲线总点数
 
 class Graphics{
 public:

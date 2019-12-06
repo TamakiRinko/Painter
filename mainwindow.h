@@ -38,9 +38,10 @@ private:
 
     QAction* DDAAction;                 //选择DDA算法
     QAction* BresenhamAction;           //选择Bresenham算法
-
     QAction* CSAction;                  //选择Cohen-Sutherland算法
     QAction* LBAction;                  //选择Liang-Barsky算法
+    QAction* BezierAction;              //选择Bezier算法
+    QAction* BsplineAction;             //选择B-Spline算法
 
     QAction* translationAction;         //平移
     QAction* rotateAction;              //旋转
@@ -67,19 +68,22 @@ private slots:
     void on_actionBresenHam_triggered();
     void on_actionCS_triggered();
     void on_actionLB_triggered();
+    void on_actionBezier_triggered();
+    void on_actionBspline_triggered();
 
     void on_LineSegmentButton_clicked();
+    void on_RandomLineButton_clicked();
+    void on_PolygonButton_clicked();
     void on_CircleButton_clicked();
     void on_EllipseButton_clicked();
+    void on_CurveButton_clicked();
     void on_ColorButton_clicked();
     void on_PaintModeCheckBox_clicked();
     void on_EraserButton_clicked();
-    void on_PolygonButton_clicked();
     void on_WithDrawButton_clicked();
     void on_WidthSpinBox_valueChanged(int arg1);
     void on_WSpinBox_valueChanged(int arg1);
     void on_HSpinBox_valueChanged(int arg1);
-    void on_RandomLineButton_clicked();
     void on_actionTranslation_triggered();
     void on_actionRotation_triggered();
     void on_actionScale_triggered();
@@ -91,6 +95,7 @@ private slots:
     void graphicsCopy_triggered();
     void graphicsPaste_triggered();
     void on_ResetButton_clicked();
+    void on_KSpinBox_valueChanged(int arg1);
 };
 
 #endif // MAINWINDOW_H

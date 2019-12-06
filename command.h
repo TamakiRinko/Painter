@@ -105,6 +105,22 @@ struct DrawPolygon{
     }
 };
 
+struct DrawCurve{
+    int id;
+    int n;
+    string alg;
+    vector< pair<int, int> > points;
+    friend ifstream& operator>>(ifstream& in, DrawCurve& d) {
+        in >> d.id >> d.n >> d.alg;
+        int x, y;
+        for(int i = 0; i < d.n; ++i){
+            in >> x >> y;
+            d.points.push_back(pair<int, int>(x, y));
+        }
+        return in;
+    }
+};
+
 struct Translate{
     int id;
     int xOffset;

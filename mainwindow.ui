@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>891</width>
-    <height>586</height>
+    <width>1027</width>
+    <height>694</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -38,7 +38,7 @@
       <property name="layoutDirection">
        <enum>Qt::LeftToRight</enum>
       </property>
-      <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,10,1,1,1,1,1">
+      <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,10,1,1,1,1,1,1,1">
        <item>
         <widget class="QLabel" name="ModeLabel">
          <property name="font">
@@ -71,6 +71,26 @@
           </size>
          </property>
         </spacer>
+       </item>
+       <item>
+        <widget class="QToolButton" name="CurveToolButton">
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="text">
+          <string>Bezier</string>
+         </property>
+         <property name="popupMode">
+          <enum>QToolButton::InstantPopup</enum>
+         </property>
+         <property name="toolButtonStyle">
+          <enum>Qt::ToolButtonTextBesideIcon</enum>
+         </property>
+        </widget>
        </item>
        <item>
         <widget class="QToolButton" name="CropToolButton">
@@ -115,6 +135,28 @@
          </property>
          <property name="arrowType">
           <enum>Qt::NoArrow</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QSpinBox" name="KSpinBox">
+         <property name="font">
+          <font>
+           <weight>50</weight>
+           <bold>false</bold>
+          </font>
+         </property>
+         <property name="prefix">
+          <string>B-Spline次数：</string>
+         </property>
+         <property name="minimum">
+          <number>1</number>
+         </property>
+         <property name="maximum">
+          <number>3</number>
+         </property>
+         <property name="value">
+          <number>3</number>
          </property>
         </widget>
        </item>
@@ -173,7 +215,7 @@
      <layout class="QVBoxLayout" name="Canvas"/>
     </item>
     <item row="0" column="0" colspan="2">
-     <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="1,10,10,10,10,10,10,10,10,10,10,10">
+     <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="1,10,10,10,10,10,10,10,10,10,10,10,10">
       <item>
        <widget class="QCheckBox" name="PaintModeCheckBox">
         <property name="text">
@@ -213,6 +255,13 @@
        <widget class="QPushButton" name="EllipseButton">
         <property name="text">
          <string>Ellipse</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="CurveButton">
+        <property name="text">
+         <string>Curve</string>
         </property>
        </widget>
       </item>
@@ -275,7 +324,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>891</width>
+     <width>1027</width>
      <height>23</height>
     </rect>
    </property>

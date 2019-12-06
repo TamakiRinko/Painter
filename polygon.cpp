@@ -30,12 +30,12 @@ Polygon::Polygon(int id, QPoint startPoint, QColor color, int width, LineAlgorit
 
 Polygon::~Polygon(){
     delete startPoint;
-    //顶点移动
+    //顶点清除
     for(int i = 0; i < vertexList.size(); ++i){
         delete vertexList[i];
     }
     vertexList.clear();
-    //边移动
+    //边清除
     for(int i = 0; i < lineList.size(); ++i){
         delete lineList[i];
     }

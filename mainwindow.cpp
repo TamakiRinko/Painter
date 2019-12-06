@@ -84,6 +84,14 @@ void MainWindow::setAction(){
     connect(LBAction, SIGNAL(triggered(bool)), this, SLOT(on_actionLB_triggered()));
     ui->CropToolButton->addAction(CSAction);
     ui->CropToolButton->addAction(LBAction);
+
+    //曲线算法选择
+    BezierAction = new QAction("Bezier");
+    connect(BezierAction, SIGNAL(triggered(bool)), this, SLOT(on_actionBezier_triggered()));
+    BsplineAction = new QAction("Bspline");
+    connect(BsplineAction, SIGNAL(triggered(bool)), this, SLOT(on_actionBspline_triggered()));
+    ui->CurveToolButton->addAction(BezierAction);
+    ui->CurveToolButton->addAction(BsplineAction);
 }
 
 MainWindow::~MainWindow(){
@@ -160,6 +168,16 @@ void MainWindow::on_actionLB_triggered(){
     paint2DWidget->setCropAlgorithm(LB);
 }
 
+void MainWindow::on_actionBezier_triggered(){
+    ui->CurveToolButton->setText("Bezier");
+    paint2DWidget->setCurveAlgorithm(BEZIER);
+}
+
+void MainWindow::on_actionBspline_triggered(){
+    ui->CurveToolButton->setText("Bspline");
+    paint2DWidget->setCurveAlgorithm(BSPLINE);
+}
+
 void MainWindow::on_LineSegmentButton_clicked(){
     paint2DWidget->setMode(LINESEGMENT);
     ui->ModeLabel->setText("LineSegment");
@@ -213,6 +231,11 @@ void MainWindow::on_EllipseButton_clicked(){
     ui->ModeLabel->setText("Ellipse");
 }
 
+void MainWindow::on_CurveButton_clicked(){
+    paint2DWidget->setMode(CURVE);
+    ui->ModeLabel->setText("Curve");
+}
+
 void MainWindow::on_ColorButton_clicked(){
     paint2DWidget->setColor(QColorDialog::getColor());
 }
@@ -261,6 +284,10 @@ void MainWindow::on_WSpinBox_valueChanged(int arg1){
 
 void MainWindow::on_HSpinBox_valueChanged(int arg1){
     resize(this->width(), arg1);
+}
+
+void MainWindow::on_KSpinBox_valueChanged(int arg1){
+    paint2DWidget->setK(arg1);
 }
 
 void MainWindow::on_actionTranslation_triggered(){

@@ -9,6 +9,7 @@
 #include "ellipse.h"
 #include "polygon.h"
 #include "randomline.h"
+#include "curve.h"
 #include "command.h"
 #include <QWidget>
 #include <QPen>
@@ -32,6 +33,8 @@ public:
     void setWidth(int width);
     void setLineAlgorithm(LineAlgorithm alg);
     void setCropAlgorithm(CropAlgorithm alg);
+    void setCurveAlgorithm(CurveAlgorithm alg);
+    void setK(int k);
     bool getIsModified();
 
     ~Paint2DWidget();
@@ -49,13 +52,14 @@ private:
     int curWidth;                               //当前的宽度
     LineAlgorithm curLineAlg;                   //当前线段算法，默认BresenHam
     CropAlgorithm curCropAlg;                   //当前裁剪算法，默认为CS
+    CurveAlgorithm curCurveAlg;                 //当前曲线算法，默认为BEZIER
+    int curK;                                   //当前B样条次数，默认为3
     QVector<Graphics* > graphicsList;           //界面上所有的图形
     Graphics* curGraphics;                      //当前正在画的图形
     Eraser* eraser;                             //橡皮擦
     bool isModified;                            //画板是否已经被修改
 
     QPoint pressPoint;                          //鼠标按下时的坐标
-//    QVector<int> transformIndexList;            //需要进行转换的图元的下标列表
     QVector<Graphics* > transformGraphicsList;  //需要进行转换的图元列表
     QVector<Graphics* > copyGraphicsList;       //复制的图元列表
     bool hasSelected;                           //已经选中
@@ -71,17 +75,22 @@ private:
 
     QVector<QPoint* > rectangleList;            //矩形框
 
+    QVector<QPoint* > curveList;                //曲线控制点
+    int curControlPointIndex;                   //当前选中的控制点下标
+
 //    QImage* image;
 
     void drawGraphics(QPainter& painter, Graphics* graphics);           //画出一个图形
     void drawPoint(QPainter& painter, QPoint* point);                   //画出一个点
-    void drawList(QPainter& painter, QVector<QPoint* >* list);          //画出一个点的列表
+    void drawList(QPainter& painter, QVector<QPoint* >* list, int width);//画出一个点的列表
 
     void eraseGraphics();                           //擦除橡皮擦覆盖到的图形
     void translation(QPoint start, QPoint end);     //平移
     void clearList(QVector<Graphics* >* list);      //清理
     void setListColor(QVector<Graphics* >* list);   //上色
     void rectangleCalculate(QPoint& startPoint, QPoint& endPoint);             //把选取矩的形边框画出来
+    bool selectControlPoint(QPoint point);          //是否选中控制点，选中则可以改变控制点
+    void translationPoint(QPoint* point, QPoint start, QPoint end);            //平移指定点
 
 
     ofstream fout;                              //debug输出
@@ -89,6 +98,7 @@ private:
     unordered_map<string, void (Paint2DWidget::*)()> commandMap;
     unordered_map<string, LineAlgorithm> LineAlgorithmMap;
     unordered_map<string, CropAlgorithm> CropAlgorithmMap;
+    unordered_map<string, CurveAlgorithm> CurveAlgorithmMap;
     Graphics* curTransformGraphics;             //命令行时当前处理的图元
 
     void insertMap();
@@ -97,8 +107,9 @@ private:
     void saveCanvasCommand();
     void setColorCommand();
     void drawLineCommand();
-    void drawEllipse();
-    void drawPolygon();
+    void drawEllipseCommand();
+    void drawPolygonCommand();
+    void drawCurveCommand();
     void translateCommand();
     void scaleCommand();
     void clipCommand();
