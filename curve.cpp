@@ -15,11 +15,12 @@ Curve::Curve(int id, QPoint point, QColor color, int width, CurveAlgorithm alg, 
     vertexNum = 1;
 }
 
-Curve::Curve(const Curve& p){
+Curve::Curve(const Curve& p): Graphics (p){
     mode = CURVE;
     alg = p.alg;
     vertexNum = p.vertexNum;
     curK = p.curK;
+    vertexList.clear();
     for(int i = 0; i < p.vertexList.size(); ++i){
         QPoint* point = new QPoint(p.vertexList[i]->x(), p.vertexList[i]->y());
         vertexList.push_back(point);
@@ -67,10 +68,11 @@ void Curve::translationPoint(int index, QPoint start, QPoint end){
 
 void Curve::drawLogic(){
     points.clear();
-    if(vertexNum == 2){                         //两点，为直线
-        LineSegment* line = new LineSegment(id, *(vertexList[0]), *(vertexList[1]), color, width, BRESENHAM);
-        points.append(line->getPoints());
-    }else if(alg == BEZIER){
+//    if(vertexNum == 2){                         //两点，为直线
+//        LineSegment* line = new LineSegment(id, *(vertexList[0]), *(vertexList[1]), color, width, BRESENHAM);
+//        points.append(line->getPoints());
+//    }else
+    if(alg == BEZIER){
         bezier();
     }else{
         bspline();
@@ -109,7 +111,7 @@ void Curve::scale(const QPoint* point, double times){
 }
 
 bool Curve::crop(int xMin, int xMax, int yMin, int yMax, CropAlgorithm curAlg){
-
+    return true;
 }
 
 void Curve::bezier(){

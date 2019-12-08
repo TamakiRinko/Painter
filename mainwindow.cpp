@@ -270,7 +270,7 @@ void MainWindow::on_EraserButton_clicked(){
 }
 
 void MainWindow::on_WithDrawButton_clicked(){
-    ui->ModeLabel->setText("WithDraw");
+//    ui->ModeLabel->setText("WithDraw");
     paint2DWidget->withDraw();
 }
 
@@ -336,5 +336,7 @@ void MainWindow::on_ResetButton_clicked(){
     ui->WidthSpinBox->setValue(1);
     ui->LineToolButton->setText("BresenHam");
     ui->CropToolButton->setText("CS");
+    ui->CurveToolButton->setText("Bezier");
+    ui->KSpinBox->setValue(3);
     paint2DWidget->reset();
 }

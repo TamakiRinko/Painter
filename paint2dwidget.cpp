@@ -188,7 +188,7 @@ void Paint2DWidget::eraseGraphics(){
 
     int offset = 0;
     for(int i: listTmp){
-        qDebug() << "删除的图形下标:" << i;
+//        qDebug() << "删除的图形下标:" << i;
         delete graphicsList[i - offset];                            //释放空间
         graphicsList.erase(graphicsList.begin() + i - offset);      //移除该图形
         offset++;
@@ -216,7 +216,10 @@ bool Paint2DWidget::getIsModified(){
  * 撤回，当为多边形时只撤回上一笔
  */
 void Paint2DWidget::withDraw(){
-    if(curMode == POLYGON && curGraphics != nullptr){       //可能该多边形恰巧画完
+    if(hasSelected){                                        //有图元被选中，不执行撤销
+        return;
+    }
+    if(curMode == POLYGON && curGraphics != nullptr){
         Polygon* curPolygon = (Polygon* )curGraphics;
         curPolygon->withDraw();
     }else if(curMode == CURVE && curGraphics != nullptr){
@@ -343,6 +346,10 @@ void Paint2DWidget::graphicsCopy(){
                     copy = new Polygon(*(Polygon*)transformGraphicsList[i]);
                     break;
                 }
+                case CURVE:{
+                    copy = new Curve(*(Curve*)transformGraphicsList[i]);
+                    break;
+                }
                 default: copy = nullptr; break;
             }
             if(copy != nullptr){
@@ -374,6 +381,8 @@ void Paint2DWidget::reset(){
     curWidth = DEFAULT_WIDTH;
     curLineAlg = BRESENHAM;
     curCropAlg = CS;
+    curCurveAlg = BEZIER;
+    curK = 3;
     clearList(&graphicsList);
     clearList(&transformGraphicsList);
     clearList(&copyGraphicsList);
@@ -386,6 +395,8 @@ void Paint2DWidget::reset(){
     scalePoint = nullptr;
     isModified = true;                      //重置也是一种改变
     hasSelected = false;
+    curveList.clear();
+    curControlPointIndex = -1;
     update();
 }
 
@@ -629,11 +640,16 @@ void Paint2DWidget::mouseReleaseEvent(QMouseEvent* e){
             int yMin = cropStartPoint.y() > cropEndPoint.y() ? cropEndPoint.y() : cropStartPoint.y();
             int yMax = cropStartPoint.y() < cropEndPoint.y() ? cropEndPoint.y() : cropStartPoint.y();
             rectangleList.clear();
-            for(int i = 0; i < transformGraphicsList.size(); ++i){
-                if(transformGraphicsList[i]->crop(xMin, xMax, yMin, yMax, curCropAlg) == false){
-                    cropList.push_back(transformGraphicsList[i]);
+
+            for(QVector<Graphics* >::iterator it = transformGraphicsList.begin(); it != transformGraphicsList.end();){
+                if((*it)->crop(xMin, xMax, yMin, yMax, curCropAlg) == false){               //该图元完全删除
+                    cropList.push_back(*it);                                                //加入到删除图元列表中
+                    transformGraphicsList.erase(it);                                        //从已选择图元中删除
+                }else{
+                    it++;
                 }
             }
+
             int k = 0;
             for(QVector<Graphics* >::iterator it = graphicsList.begin(); it != graphicsList.end() && k < cropList.size();){
                 if((*it) == cropList[k]){
@@ -643,6 +659,9 @@ void Paint2DWidget::mouseReleaseEvent(QMouseEvent* e){
                 }else{
                     it++;
                 }
+            }
+            if(transformGraphicsList.size() == 0){
+                hasSelected = false;
             }
             break;
         }
