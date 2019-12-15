@@ -111,7 +111,8 @@ void LineSegment::bresenHam(){
             points.append(tempPoint);
             index += direction;
         }
-        points.append(&endPoint);
+//        points.append(&endPoint);
+        points.push_back(new QPoint(endPoint.x(), endPoint.y()));
         return;
     }
 
@@ -175,7 +176,8 @@ void LineSegment::DDA(){
             points.append(tempPoint);
             index += direction;
         }
-        points.append(&endPoint);
+//        points.append(&endPoint);
+        points.push_back(new QPoint(endPoint.x(), endPoint.y()));
         return;
     }
 

@@ -21,6 +21,7 @@ Paint2DWidget::Paint2DWidget(const char* fileName, QWidget *parent) :
     eraser = &Eraser::getInstance();
     isModified = false;
     hasSelected = false;
+    hasWithDraw = false;
 
     //预处理组合数
     for(int i = 0; i < maxCurveNum; ++i){
@@ -81,11 +82,13 @@ void Paint2DWidget::setMode(Mode mode){
         curGraphics = nullptr;
         curveList.clear();
         curControlPointIndex = -1;
+        withDrawCurveStack.clear();
     }
     this->curMode = mode;
     if(curMode != TRANSLATION && curMode != ROTATION && curMode != SELECT
             && curMode != SCALE && curMode != SELECTBOLCK && curMode != CROP){
         clearList(&transformGraphicsList);
+        hasSelected = false;
     }
     if(curMode != ROTATION && rotatePoint != nullptr){          //旋转基准点
         delete rotatePoint;
@@ -223,19 +226,56 @@ void Paint2DWidget::withDraw(){
         Polygon* curPolygon = (Polygon* )curGraphics;
         curPolygon->withDraw();
     }else if(curMode == CURVE && curGraphics != nullptr){
+        if(curControlPointIndex != -1){
+            return;
+        }
         Curve* curCurve = (Curve* )curGraphics;
         curCurve->withDraw();
         if(curveList.size() > 1){
-            delete curveList[curveList.size() - 1];
+            withDrawCurveStack.push_front(curveList[curveList.size() - 1]);
             curveList.pop_back();
         }
     }else{
         if(!graphicsList.isEmpty()){
-            delete graphicsList[graphicsList.size() - 1];
+            withDrawStack.push_front(graphicsList[graphicsList.size() - 1]);
             graphicsList.pop_back();
+            hasWithDraw = true;
         }
     }
     update();
+}
+
+/**
+ * @brief Paint2DWidget::reDraw
+ * 重画撤回的图元，必须先撤回再重画
+ */
+void Paint2DWidget::reDraw(){
+    if(curMode == POLYGON && curGraphics != nullptr){
+        Polygon* curPolygon = (Polygon* )curGraphics;
+        curPolygon->reDraw();
+        update();
+    }else if(curMode == CURVE && curGraphics != nullptr){
+        Curve* curCurve = (Curve* )curGraphics;
+        curCurve->reDraw();
+        if(!withDrawCurveStack.empty()){
+            curveList.push_back(withDrawCurveStack.front());
+            withDrawCurveStack.pop_front();
+        }
+        update();
+    }else if(hasWithDraw && !withDrawStack.empty()){
+        graphicsList.push_back(withDrawStack.front());
+        withDrawStack.pop_front();
+        update();
+    }
+}
+
+void Paint2DWidget::clearWithDraw(){
+    while(!withDrawStack.empty()){
+        delete withDrawStack[0];
+        withDrawStack.pop_front();
+    }
+
+    hasWithDraw = false;
 }
 
 void Paint2DWidget::translation(QPoint start, QPoint end){
@@ -371,6 +411,7 @@ void Paint2DWidget::graphicsPaste(){
             graphicsList.push_back(copyGraphicsList[i]);
         }
         curMode = TRANSLATION;
+        clearWithDraw();
         update();
     }
 }
@@ -395,6 +436,9 @@ void Paint2DWidget::reset(){
     scalePoint = nullptr;
     isModified = true;                      //重置也是一种改变
     hasSelected = false;
+    hasWithDraw = false;
+    withDrawStack.clear();
+    withDrawCurveStack.clear();
     curveList.clear();
     curControlPointIndex = -1;
     update();
@@ -540,8 +584,16 @@ void Paint2DWidget::mouseReleaseEvent(QMouseEvent* e){
             break;
         }
         case CURVE:{
+            int preIndex = curControlPointIndex;
+            if(curControlPointIndex != -1 && e->button() == Qt::RightButton && selectControlPoint(point)){
+                if(preIndex == curControlPointIndex){
+                    curControlPointIndex = -1;
+                    this->setCursor(Qt::ArrowCursor);
+                    break;
+                }
+            }
             this->setCursor(Qt::ArrowCursor);
-            if(selectControlPoint(point)){                                              //选中了控制点
+            if(e->button() == Qt::LeftButton && selectControlPoint(point)){                                              //选中了控制点
                 break;
             }
             if(curGraphics == nullptr && e->button() == Qt::RightButton){               //初始按下右键，不作为
@@ -555,6 +607,7 @@ void Paint2DWidget::mouseReleaseEvent(QMouseEvent* e){
             if(curGraphics == nullptr){
                 curGraphics = new Curve(curId++, point, curColor, curWidth, curCurveAlg, curK);//当前为曲线
             }else{
+                withDrawCurveStack.clear();
                 Curve* curCurve = (Curve* )curGraphics;
                 curCurve->setNextPoint(point);
                 if(e->button() == Qt::RightButton){                     //右键点击，结束绘制
@@ -668,6 +721,7 @@ void Paint2DWidget::mouseReleaseEvent(QMouseEvent* e){
         default: break;
     }
     isModified = true;
+    clearWithDraw();
     update();
 }
 
@@ -741,6 +795,7 @@ void Paint2DWidget::mouseMoveEvent(QMouseEvent* e){
         }
         default: break;
     }
+    clearWithDraw();
     isModified = true;
 }
 
@@ -768,7 +823,8 @@ void Paint2DWidget::wheelEvent(QWheelEvent* e){
         }
         default: break;
     }
-
+    clearWithDraw();
+    isModified = true;
 }
 
 void Paint2DWidget::insertMap(){
@@ -788,7 +844,7 @@ void Paint2DWidget::insertMap(){
     CropAlgorithmMap.insert(pair<string, CropAlgorithm>("Cohen-Sutherland", CS));
     CropAlgorithmMap.insert(pair<string, CropAlgorithm>("Liang-Barsky", LB));
     CurveAlgorithmMap.insert(pair<string, CurveAlgorithm>("Bezier", BEZIER));
-    CurveAlgorithmMap.insert(pair<string, CurveAlgorithm>("Bspline", BSPLINE));
+    CurveAlgorithmMap.insert(pair<string, CurveAlgorithm>("B-spline", BSPLINE));
 }
 
 int Paint2DWidget::findGraphics(int id){
@@ -909,6 +965,28 @@ void Paint2DWidget::drawCurveCommand(){
         graphicsList.append(curGraphics);
     }
     curGraphics = nullptr;
+
+
+
+//    clock_t startTime,endTime;
+//    startTime = clock();
+//    for(int i = 0; i < 1000; ++i){
+//        QPoint p(d.points[0].first, d.points[0].second);
+//        curGraphics = new Curve(d.id, p, curColor, curWidth, CurveAlgorithmMap[d.alg]);
+//        Curve* curCurve = (Curve* )curGraphics;
+//        for(int i = 1; i < d.n; ++i){
+//            QPoint point(d.points[i].first, d.points[i].second);
+//            curCurve->setNextPoint(point);
+//        }
+//        if(!curGraphics->isNotGraphics()){
+//            curGraphics->drawLogic();
+//            graphicsList.append(curGraphics);
+//        }
+//        curGraphics = nullptr;
+//    }
+//    endTime = clock();
+//    fout << (double)(endTime - startTime) / CLOCKS_PER_SEC << "s" << endl;
+
 }
 
 void Paint2DWidget::rotateCommand(){

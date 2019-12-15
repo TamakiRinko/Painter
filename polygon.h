@@ -13,6 +13,7 @@ public:
     void setNextPoint(QPoint nextPoint);
     void complete();
     void withDraw();
+    bool reDraw();
     void drawLogic();
     bool isNotGraphics();
     void translation(int xOffset, int yOffset);
@@ -25,6 +26,7 @@ private:
     QVector<LineSegment*> lineList;                 //多边形边集
     int num;                                        //当前有多少顶点
     LineAlgorithm alg;
+    QVector<QPoint* > withDrawStack;                //撤回的点
 
     bool WA();
 };

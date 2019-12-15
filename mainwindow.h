@@ -81,6 +81,7 @@ private slots:
     void on_PaintModeCheckBox_clicked();
     void on_EraserButton_clicked();
     void on_WithDrawButton_clicked();
+    void on_ReDoButton_clicked();
     void on_WidthSpinBox_valueChanged(int arg1);
     void on_WSpinBox_valueChanged(int arg1);
     void on_HSpinBox_valueChanged(int arg1);

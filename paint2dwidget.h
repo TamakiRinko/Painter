@@ -40,6 +40,7 @@ public:
     ~Paint2DWidget();
 
     void withDraw();                            //撤回
+    void reDraw();                              //重画
     void saveTo(QString fileName, const char* format = "bmp");            //保存为指定格式
     void graphicsCopy();
     void graphicsPaste();
@@ -78,7 +79,10 @@ private:
     QVector<QPoint* > curveList;                //曲线控制点
     int curControlPointIndex;                   //当前选中的控制点下标
 
-//    QImage* image;
+    bool hasWithDraw;                           //是否已经撤回了
+    QVector<Graphics* > withDrawStack;          //撤回的图元
+    QVector<QPoint* > withDrawCurveStack;       //撤回的曲线控制点
+    void clearWithDraw();                       //清除撤回
 
     void drawGraphics(QPainter& painter, Graphics* graphics);           //画出一个图形
     void drawPoint(QPainter& painter, QPoint* point);                   //画出一个点

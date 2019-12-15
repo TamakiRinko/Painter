@@ -215,7 +215,7 @@
      <layout class="QVBoxLayout" name="Canvas"/>
     </item>
     <item row="0" column="0" colspan="2">
-     <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="1,10,10,10,10,10,10,10,10,10,10,10,10">
+     <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="1,10,10,10,10,10,10,10,10,10,10,10,10,10">
       <item>
        <widget class="QCheckBox" name="PaintModeCheckBox">
         <property name="text">
@@ -297,6 +297,13 @@
        <widget class="QPushButton" name="WithDrawButton">
         <property name="text">
          <string>WithDraw</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="ReDoButton">
+        <property name="text">
+         <string>ReDo</string>
         </property>
        </widget>
       </item>

@@ -14,6 +14,7 @@ public:
     void setCurK(int i);
     void setNextPoint(QPoint point);
     void withDraw();
+    void reDraw();
     void translationPoint(int index, QPoint start, QPoint end);
 
     void drawLogic();
@@ -27,6 +28,7 @@ public:
 private:
     int vertexNum;                                          //点的个数
     QVector<QPoint*> vertexList;                            //曲线顶点集
+    QVector<QPoint*> withDrawStack;                         //撤回的点
     CurveAlgorithm alg;                                     //算法
     int curK;                                               //k次B样条
 

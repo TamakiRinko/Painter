@@ -5,6 +5,7 @@
 #include <QPainter>
 #include <QColor>
 #include <QVector>
+#include <QMap>
 #include <QPoint>
 #include <QSet>
 #include <QList>

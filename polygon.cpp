@@ -46,6 +46,9 @@ void Polygon::setNextPoint(QPoint nextPoint){
     if(nextPoint.x() == vertexList[num - 1]->x() && nextPoint.y() == vertexList[num - 1]->y()){
         return;
     }
+
+    withDrawStack.clear();
+
     QPoint* next = new QPoint(nextPoint);
     vertexList.append(next);
     num++;
@@ -63,11 +66,25 @@ void Polygon::withDraw(){
         lineList.pop_back();
     }
     if(num > 1){
-        delete vertexList[vertexList.size() - 1];
+//        delete vertexList[vertexList.size() - 1];
+        withDrawStack.push_front(vertexList[vertexList.size() - 1]);
         vertexList.pop_back();
         num--;
     }
     drawLogic();
+}
+
+bool Polygon::reDraw(){
+    if(!withDrawStack.empty()){
+        num++;
+        vertexList.push_back(withDrawStack.front());
+        withDrawStack.pop_front();
+        LineSegment* line = new LineSegment(id, *(vertexList[num - 2]), *(vertexList[num - 1]), color, width, alg);
+        lineList.append(line);
+        drawLogic();
+        return true;
+    }
+    return false;
 }
 
 /**

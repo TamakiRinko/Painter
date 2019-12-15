@@ -41,6 +41,7 @@ void Curve::setCurK(int i){
 }
 
 void Curve::setNextPoint(QPoint point){
+    withDrawStack.clear();
     QPoint* nextPoint = new QPoint(point.x(), point.y());
     vertexList.push_back(nextPoint);
     vertexNum++;
@@ -49,13 +50,21 @@ void Curve::setNextPoint(QPoint point){
 
 void Curve::withDraw(){
     if(vertexList.size() > 1){
-        delete vertexList[vertexList.size() - 1];
+//        delete vertexList[vertexList.size() - 1];
+        withDrawStack.push_front(vertexList[vertexList.size() - 1]);
         vertexList.pop_back();
-    }
-    if(vertexNum > 1){
         vertexNum--;
     }
     drawLogic();
+}
+
+void Curve::reDraw(){
+    if(!withDrawStack.empty()){
+        vertexNum++;
+        vertexList.push_back(withDrawStack.front());
+        withDrawStack.pop_front();
+        drawLogic();
+    }
 }
 
 void Curve::translationPoint(int index, QPoint start, QPoint end){
@@ -129,7 +138,7 @@ void Curve::bezier(){
 }
 
 void Curve::bspline(){
-    for(double u = curK; u < vertexNum; u += 0.001){
+    for(double u = curK; u <= vertexNum; u += 0.001){
         QPointF tmp(0,0);
         for(int i = 0; i < vertexNum; i++){
             QPointF t(vertexList[i]->x(), vertexList[i]->y());
@@ -182,7 +191,7 @@ double Curve::curK3(int i, double u){
     double a = 1.0 / 6;
 
     if (0 <= t && t < 1)
-        return a * t * t * t;
+        return a * pow(t, 3);
     if (1 <= t && t < 2)
         return a * (-3 * pow(t - 1, 3) + 3 * pow(t - 1, 2) + 3 * (t - 1) + 1);
     if (2 <= t && t < 3)

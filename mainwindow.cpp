@@ -274,6 +274,10 @@ void MainWindow::on_WithDrawButton_clicked(){
     paint2DWidget->withDraw();
 }
 
+void MainWindow::on_ReDoButton_clicked(){
+    paint2DWidget->reDraw();
+}
+
 void MainWindow::on_WidthSpinBox_valueChanged(int arg1){
     paint2DWidget->setWidth(arg1);
 }
