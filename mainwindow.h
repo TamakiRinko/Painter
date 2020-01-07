@@ -11,7 +11,6 @@
 #include <QSpinBox>
 #include "paint2dwidget.h"
 
-
 namespace Ui {
 class MainWindow; 
 }
@@ -27,7 +26,7 @@ public:
 private:
     Ui::MainWindow *ui;
     Paint2DWidget* paint2DWidget;
-    QOpenGLWidget* paint3DWidget;
+//    QOpenGLWidget* paint3DWidget;
 
     QMenu* fileMenu;                    //文件菜单
     QMenu* transformMenu;               //操作菜单
@@ -49,6 +48,7 @@ private:
     QAction* cropAction;                //裁剪
 
     QString fileName;                   //保存的文件名
+
 
     void setAction();                   //设置Action
 
@@ -78,7 +78,7 @@ private slots:
     void on_EllipseButton_clicked();
     void on_CurveButton_clicked();
     void on_ColorButton_clicked();
-    void on_PaintModeCheckBox_clicked();
+//    void on_PaintModeCheckBox_clicked();
     void on_EraserButton_clicked();
     void on_WithDrawButton_clicked();
     void on_ReDoButton_clicked();

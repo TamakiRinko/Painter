@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1027</width>
+    <width>1108</width>
     <height>694</height>
    </rect>
   </property>
@@ -215,14 +215,7 @@
      <layout class="QVBoxLayout" name="Canvas"/>
     </item>
     <item row="0" column="0" colspan="2">
-     <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="1,10,10,10,10,10,10,10,10,10,10,10,10,10">
-      <item>
-       <widget class="QCheckBox" name="PaintModeCheckBox">
-        <property name="text">
-         <string>3D</string>
-        </property>
-       </widget>
-      </item>
+     <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="10,10,10,10,10,10,10,10,10,10,10,10,10">
       <item>
        <widget class="QPushButton" name="LineSegmentButton">
         <property name="text">
@@ -331,7 +324,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1027</width>
+     <width>1108</width>
      <height>23</height>
     </rect>
    </property>

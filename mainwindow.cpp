@@ -15,9 +15,9 @@ MainWindow::MainWindow(const char* file, QWidget *parent) :
     paint2DWidget = new Paint2DWidget(file);
     paint2DWidget->setMode(NONE);
     ui->Canvas->addWidget(paint2DWidget);
-    paint3DWidget = new QOpenGLWidget;
-    ui->Canvas->addWidget(paint3DWidget);
-    paint3DWidget->hide();
+//    paint3DWidget = new QOpenGLWidget;
+//    ui->Canvas->addWidget(paint3DWidget);
+//    paint3DWidget->hide();
 
     //QT模式
     if(file == nullptr){
@@ -240,29 +240,29 @@ void MainWindow::on_ColorButton_clicked(){
     paint2DWidget->setColor(QColorDialog::getColor());
 }
 
-void MainWindow::on_PaintModeCheckBox_clicked(){
-    if(ui->PaintModeCheckBox->isChecked()){
-        setWindowTitle("3DPaint");
-        paint3DWidget->show();
-        paint2DWidget->hide();
-        ui->LineSegmentButton->setDisabled(true);
-        ui->CircleButton->setDisabled(true);
-        ui->EllipseButton->setDisabled(true);
-        ui->RandomLineButton->setDisabled(true);
-        ui->PolygonButton->setDisabled(true);
-        paint2DWidget->setMode(NONE);
-        paint2DWidget->setColor(DEFAULT_COLOR);
-    }else{
-        setWindowTitle("2DPaint");
-        paint3DWidget->hide();
-        paint2DWidget->show();
-        ui->LineSegmentButton->setEnabled(true);
-        ui->CircleButton->setEnabled(true);
-        ui->EllipseButton->setEnabled(true);
-        ui->RandomLineButton->setEnabled(true);
-        ui->PolygonButton->setEnabled(true);
-    }
-}
+//void MainWindow::on_PaintModeCheckBox_clicked(){
+//    if(ui->PaintModeCheckBox->isChecked()){
+//        setWindowTitle("3DPaint");
+//        paint3DWidget->show();
+//        paint2DWidget->hide();
+//        ui->LineSegmentButton->setDisabled(true);
+//        ui->CircleButton->setDisabled(true);
+//        ui->EllipseButton->setDisabled(true);
+//        ui->RandomLineButton->setDisabled(true);
+//        ui->PolygonButton->setDisabled(true);
+//        paint2DWidget->setMode(NONE);
+//        paint2DWidget->setColor(DEFAULT_COLOR);
+//    }else{
+//        setWindowTitle("2DPaint");
+//        paint3DWidget->hide();
+//        paint2DWidget->show();
+//        ui->LineSegmentButton->setEnabled(true);
+//        ui->CircleButton->setEnabled(true);
+//        ui->EllipseButton->setEnabled(true);
+//        ui->RandomLineButton->setEnabled(true);
+//        ui->PolygonButton->setEnabled(true);
+//    }
+//}
 
 void MainWindow::on_EraserButton_clicked(){
     paint2DWidget->setMode(ERASER);
@@ -344,3 +344,4 @@ void MainWindow::on_ResetButton_clicked(){
     ui->KSpinBox->setValue(3);
     paint2DWidget->reset();
 }
+
